@@ -19,14 +19,14 @@
  */
 
 /**
- * 	\defgroup   mymodule     Module MyModule
+ *    \defgroup   mymodule     Module MyModule
  *  \brief      MyModule module descriptor.
  *
  *  \file       htdocs/mymodule/core/modules/modMyModule.class.php
  *  \ingroup    mymodule
  *  \brief      Description and activation file for module MyModule
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT . '/core/modules/DolibarrModules.class.php';
 
 /**
  *  Description and activation class for module MyModule
@@ -69,7 +69,7 @@ class modBasket extends DolibarrModules
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
@@ -93,12 +93,10 @@ class modBasket extends DolibarrModules
 			// Set this to 1 if module has its own theme directory (theme)
 			'theme' => 0,
 			// Set this to relative path of css file if module has its own css file
-			'css' => array(
-				//    '/basket/css/basket.css.php',
+			'css' => array(//    '/basket/css/basket.css.php',
 			),
 			// Set this to relative path of js file if module must load a js on all pages
-			'js' => array(
-				//   '/basket/js/basket.js.php',
+			'js' => array(//   '/basket/js/basket.js.php',
 			),
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
 			'hooks' => array(
@@ -180,23 +178,23 @@ class modBasket extends DolibarrModules
 		// Dictionaries
 		$this->dictionaries = array(
 			// List of tables we want to see into dictonnary editor
-			'tabname'=>array(MAIN_DB_PREFIX."c_terrain"),
+			'tabname' => array(MAIN_DB_PREFIX . "c_terrain"),
 			// Label of tables
-			'tablib'=>array("DictionaryTerrain" => $langs->trans('Basket - Terrains/Gymnases')),
+			'tablib' => array("DictionaryTerrain" => $langs->trans('Basket - Terrains/Gymnases')),
 			// Request to select fields
-			'tabsql'=>array('SELECT rowid, code, nom_terrain, ville, active FROM '.MAIN_DB_PREFIX.'c_terrain'),
+			'tabsql' => array('SELECT rowid, code, nom_terrain, ville, active FROM ' . MAIN_DB_PREFIX . 'c_terrain'),
 			// Sort order
-			'tabsqlsort'=>array("nom_terrain ASC"),
+			'tabsqlsort' => array("nom_terrain ASC"),
 			// List of fields (result of select to show dictionary)
-			'tabfield'=>array('code,'.$langs->trans("nom_terrain").',ville'),
+			'tabfield' => array('code,' . $langs->trans("nom_terrain") . ',ville'),
 			// List of fields (list of fields to edit a record)
-			'tabfieldvalue'=>array("code,nom_terrain,ville"),
+			'tabfieldvalue' => array("code,nom_terrain,ville"),
 			// List of fields (list of fields for insert)
-			'tabfieldinsert'=>array("code,nom_terrain,ville"),
+			'tabfieldinsert' => array("code,nom_terrain,ville"),
 			// Name of columns with primary key (try to always name it 'rowid')
-			'tabrowid'=>array("rowid"),
+			'tabrowid' => array("rowid"),
 			// Condition to show each dictionary
-			'tabcond'=>array($conf->basket->enabled)
+			'tabcond' => array($conf->basket->enabled)
 		);
 		/* Example:
 		$this->dictionaries=array(
@@ -283,50 +281,50 @@ class modBasket extends DolibarrModules
 		// Add here entries to declare new menus
 		/* BEGIN MODULEBUILDER TOPMENU */
 		$this->menu[$r++] = array(
-			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'top', // This is a Top menu entry
-			'titre'=>'Match',
-			'mainmenu'=>'basket',
-			'leftmenu'=>'',
-			'url'=>'/basket/index.php',
-			'langs'=>'langs@basket', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000 + $r,
-			'enabled'=>'$conf->basket->enabled', // Define condition to show or hide menu entry. Use '$conf->basket->enabled' if entry must be visible if module is enabled.
-			'perms'=>'1', // Use 'perms'=>'$user->rights->basket->myobject->read' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'fk_menu' => '', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'top', // This is a Top menu entry
+			'titre' => 'Match',
+			'mainmenu' => 'basket',
+			'leftmenu' => '',
+			'url' => '/basket/index.php',
+			'langs' => 'langs@basket', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 1000 + $r,
+			'enabled' => '$conf->basket->enabled', // Define condition to show or hide menu entry. Use '$conf->basket->enabled' if entry must be visible if module is enabled.
+			'perms' => '1', // Use 'perms'=>'$user->rights->basket->myobject->read' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		/* END MODULEBUILDER TOPMENU */
 		// BEGIN MODULEBUILDER LEFTMENU MYOBJECT
 
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=basket',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',                          // This is a Top menu entry
-			'titre'=>'Nouveau Match',
-			'mainmenu'=>'basket',
-			'leftmenu'=>'basket_basketmatch_new',
-			'url'=>'/basket/basketmatch_card.php?action=create',
-			'langs'=>'langs@basket',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->basket->enabled',  // Define condition to show or hide menu entry. Use '$conf->basket->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->basket->basketmatch->read',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
+		$this->menu[$r++] = array(
+			'fk_menu' => 'fk_mainmenu=basket',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'left',                          // This is a Top menu entry
+			'titre' => 'Nouveau Match',
+			'mainmenu' => 'basket',
+			'leftmenu' => 'basket_basketmatch_new',
+			'url' => '/basket/basketmatch_card.php?action=create',
+			'langs' => 'langs@basket',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 1000 + $r,
+			'enabled' => '$conf->basket->enabled',  // Define condition to show or hide menu entry. Use '$conf->basket->enabled' if entry must be visible if module is enabled.
+			'perms' => '$user->rights->basket->basketmatch->read',                            // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2,                                // 0=Menu for internal users, 1=external users, 2=both
 		);
 
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=basket',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'Liste Matchs',
-			'mainmenu'=>'basket',
-			'leftmenu'=>'basket_basketmatch_list',
-			'url'=>'/basket/basketmatch_list.php',
-			'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->basket->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->basket->basketmatch->read',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
+		$this->menu[$r++] = array(
+			'fk_menu' => 'fk_mainmenu=basket',        // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'left',                            // This is a Left menu entry
+			'titre' => 'Liste Matchs',
+			'mainmenu' => 'basket',
+			'leftmenu' => 'basket_basketmatch_list',
+			'url' => '/basket/basketmatch_list.php',
+			'langs' => 'mymodule@mymodule',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 1000 + $r,
+			'enabled' => '$conf->basket->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '$user->rights->basket->basketmatch->read',                            // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2,                                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		/*
 		$this->menu[$r++]=array(
@@ -402,8 +400,8 @@ class modBasket extends DolibarrModules
 	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *  It also creates data directories
 	 *
-	 *  @param      string  $options    Options when enabling module ('', 'noboxes')
-	 *  @return     int             	1 if OK, 0 if KO
+	 * @param string $options Options when enabling module ('', 'noboxes')
+	 * @return     int                1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
@@ -429,33 +427,31 @@ class modBasket extends DolibarrModules
 		// Document templates
 		$moduledir = 'basket';
 		$myTmpObjects = array();
-		$myTmpObjects['MyObject']=array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+		$myTmpObjects['MyObject'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			if ($myTmpObjectKey == 'MyObject') continue;
 			if ($myTmpObjectArray['includerefgeneration']) {
-				$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/basket/template_myobjects.odt';
-				$dirodt=DOL_DATA_ROOT.'/doctemplates/basket';
-				$dest=$dirodt.'/template_myobjects.odt';
+				$src = DOL_DOCUMENT_ROOT . '/install/doctemplates/basket/template_myobjects.odt';
+				$dirodt = DOL_DATA_ROOT . '/doctemplates/basket';
+				$dest = $dirodt . '/template_myobjects.odt';
 
-				if (file_exists($src) && ! file_exists($dest))
-				{
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				if (file_exists($src) && !file_exists($dest)) {
+					require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 					dol_mkdir($dirodt);
-					$result=dol_copy($src, $dest, 0, 0);
-					if ($result < 0)
-					{
+					$result = dol_copy($src, $dest, 0, 0);
+					if ($result < 0) {
 						$langs->load("errors");
-						$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 						return 0;
 					}
 				}
 
 				$sql = array_merge($sql, array(
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".strtolower($myTmpObjectKey)."',".$conf->entity.")",
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".strtolower($myTmpObjectKey)."', ".$conf->entity.")"
+					"DELETE FROM " . MAIN_DB_PREFIX . "document_model WHERE nom = 'standard_" . strtolower($myTmpObjectKey) . "' AND type = '" . strtolower($myTmpObjectKey) . "' AND entity = " . $conf->entity,
+					"INSERT INTO " . MAIN_DB_PREFIX . "document_model (nom, type, entity) VALUES('standard_" . strtolower($myTmpObjectKey) . "','" . strtolower($myTmpObjectKey) . "'," . $conf->entity . ")",
+					"DELETE FROM " . MAIN_DB_PREFIX . "document_model WHERE nom = 'generic_" . strtolower($myTmpObjectKey) . "_odt' AND type = '" . strtolower($myTmpObjectKey) . "' AND entity = " . $conf->entity,
+					"INSERT INTO " . MAIN_DB_PREFIX . "document_model (nom, type, entity) VALUES('generic_" . strtolower($myTmpObjectKey) . "_odt', '" . strtolower($myTmpObjectKey) . "', " . $conf->entity . ")"
 				));
 			}
 		}
@@ -468,8 +464,8 @@ class modBasket extends DolibarrModules
 	 *  Remove from database constants, boxes and permissions from Dolibarr database.
 	 *  Data directories are not deleted
 	 *
-	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *  @return     int                 1 if OK, 0 if KO
+	 * @param string $options Options when enabling module ('', 'noboxes')
+	 * @return     int                 1 if OK, 0 if KO
 	 */
 	public function remove($options = '')
 	{
