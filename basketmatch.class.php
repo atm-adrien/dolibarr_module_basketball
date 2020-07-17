@@ -306,9 +306,9 @@ class BasketMatch extends CommonObject
         }else $linkclose = ($morecss?' class = "'.$morecss.'"':'');
 
         if($id){
-            $lien = '<a href = "'.dol_buildpath('/mymodule/BasketMatch_card.php',1).'?id='.$id.'&action=view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('basket/basketmatch_card.php',1).'?id='.$id.'&action=view"'.$linkclose.'>';
         }else if (!empty($ref)){
-            $lien = '<a href = "'.dol_buildpath('/mymodule/BasketMatch_card.php',1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
+            $lien = '<a href = "'.dol_buildpath('basket/basketmatch_card.php',1).'?ref='.$ref.'&action=view"'.$linkclose.'>';
         }else{
             $lien = "";
         }

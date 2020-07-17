@@ -304,7 +304,7 @@ class modBasket extends DolibarrModules
 			'mainmenu' => 'basket',
 			'leftmenu' => 'basket_basketmatch_new',
 			'url' => '/basket/basketmatch_card.php?action=create',
-			'langs' => 'langs@basket',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs' => 'basket@basket',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => '$conf->basket->enabled',  // Define condition to show or hide menu entry. Use '$conf->basket->enabled' if entry must be visible if module is enabled.
 			'perms' => '$user->rights->basket->basketmatch->read',                            // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -319,7 +319,7 @@ class modBasket extends DolibarrModules
 			'mainmenu' => 'basket',
 			'leftmenu' => 'basket_basketmatch_list',
 			'url' => '/basket/basketmatch_list.php',
-			'langs' => 'mymodule@mymodule',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs' => 'basket@basket',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => '$conf->basket->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms' => '$user->rights->basket->basketmatch->read',                            // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules

@@ -347,18 +347,16 @@ switch ($action) {
 // show the field soc1
 
 		print "<tr>\n";
-		print '<td class="fieldrequired">' . $langs->trans('Soc1') . ' </td><td>';
+		print '<td class="fieldrequired">' . $langs->trans('Equipe domicile') . ' </td><td>';
 		if ($edit == 1) {
 			$sql_soc1 = array('table' => 'societe', 'keyfield' => 'rowid', 'fields' => 'nom', 'join' => '', 'where' => '', 'tail' => '');
 			$html_soc1 = array('name' => 'team1', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
 			$addChoices_soc1 = null;
 			print select_sellist($sql_soc1, $html_soc1, $object->soc1, $addChoices_soc1);
 		} else {
-			if ($object->fk_soc1 != '') {
-				print print_sellist($sql_soc1, $object->fk_soc1);
-			} else {
-				print '<td></td>';
-			}
+			$team1 = New Societe($db);
+			$team1->fetch($object->soc1);
+			print $team1->getNomUrl('1');
 		}
 		print "</td>";
 		print "\n</tr>\n";
@@ -366,18 +364,16 @@ switch ($action) {
 // show the field soc2
 
 		print "<tr>\n";
-		print '<td class="fieldrequired">' . $langs->trans('Soc2') . ' </td><td>';
+		print '<td class="fieldrequired">' . $langs->trans('Equipe exterieure') . ' </td><td>';
 		if ($edit == 1) {
 			$sql_soc2 = array('table' => 'societe', 'keyfield' => 'rowid', 'fields' => 'nom', 'join' => '', 'where' => '', 'tail' => '');
 			$html_soc2 = array('name' => 'team2', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
 			$addChoices_soc2 = null;
 			print select_sellist($sql_soc2, $html_soc2, $object->soc2, $addChoices_soc2);
 		} else {
-			if ($object->fk_soc2 != '') {
-				print print_sellist($sql_soc2, $object->fk_soc2);
-			} else {
-				print '<td></td>';
-			}
+			$team1 = New Societe($db);
+			$team1->fetch($object->soc1);
+			print $team1->getNomUrl('1');
 		}
 		print "</td>";
 		print "\n</tr>\n";
@@ -413,16 +409,19 @@ switch ($action) {
 // show the field terrain
 
 		print "<tr>\n";
-		print '<td class="fieldrequired">' . $langs->trans('Terrain') . ' </td><td>';
+		print '<td class="fieldrequired">' . $langs->trans('Terrain') . ' </td>';
+
 		if ($edit == 1) {
 			$sql_soc2 = array('table' => 'c_terrain', 'keyfield' => 'rowid', 'fields' => 'nom_terrain', 'join' => '', 'where' => 'active = 1', 'tail' => '');
 			$html_soc2 = array('name' => 'select_terrain', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
 			$addChoices_soc2 = null;
-			print select_sellist($sql_soc2, $html_soc2, $object->soc2, $addChoices_soc2);
+			print "<td>".select_sellist($sql_soc2, $html_soc2, $object->soc2, $addChoices_soc2)."</td>";
 		} else {
-			print $object->terrain;
+			$terrainsql = 'SELECT nom_terrain FROM '.MAIN_DB_PREFIX.'c_terrain WHERE rowid = '.$object->terrain;
+			$resterrain = $db->query($terrainsql);
+			$terrain = $db->fetch_object($resterrain);
+			print "<td>".$terrain->nom_terrain."</td>";
 		}
-		print "</td>";
 		print "\n</tr>\n";
 		print "<td></td></tr>\n";
 

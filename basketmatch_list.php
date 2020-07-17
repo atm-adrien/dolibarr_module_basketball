@@ -55,7 +55,7 @@ dol_include_once('/core/class/html.formprojet.class.php');
 $PHP_SELF = $_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
-$langs->load("basketmatch@mymodule");
+$langs->load("basket@basket");
 
 // Get parameter
 $id			= GETPOST('id','int');
@@ -161,7 +161,7 @@ $formproject = new FormProjets($db);
        break;
     case 'delete':
         if( $action == 'delete' && ($id>0 || $ref != "")){
-         $ret = $form->form_confirm(dol_buildpath('/mymodule/BasketMatch_card.php',1).'?action=confirm_delete&id='.$id,$langs->trans('DeleteBasketMatch'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
+         $ret = $form->form_confirm(dol_buildpath('/BasketMatch_card.php',1).'?action=confirm_delete&id='.$id,$langs->trans('DeleteBasketMatch'),$langs->trans('ConfirmDelete'),'confirm_delete', '', 0, 1);
          if ($ret == 'html') print '<br />';
          //to have the object to be deleted in the background\
         }
@@ -320,7 +320,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	print '</td>';
 //Search field for soc2
 	print '<td class="liste_titre" colspan="1" >';
-	$sql_soc2 = array('table'=> $object->table_element,'keyfield'=> 'rowid','fields'=>'ref, nom', 'join' => '', 'where'=>'','tail'=>'');
+	$sql_soc2 = array('table'=> $object->table_element,'keyfield'=> 'rowid','fields'=>'fk_soc2', 'join' => '', 'where'=>'','tail'=>'');
 	$html_soc2 = array('name'=>'ls_soc2','class'=>'','otherparam'=>'','ajaxNbChar'=>'','separator'=> '-');
 	$addChoices_soc2 = null;
 	print select_sellist($sql_soc2,$html_soc2, $ls_soc2,$addChoices_soc2 );
@@ -355,8 +355,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             if ($obj)
             {
                 // You can use here results
-                	print "<tr class=\"oddeven\"  onclick=\"location.href = '";
-	print $basedurl.$obj->rowid."'\" >";
 	print "<td>".$object->getNomUrl($obj->ref,'',$obj->ref,0)."</td>";
 	print "<td>".$obj->nom."</td>";
 	if(class_exists('Societe')){
@@ -375,7 +373,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	}
 	print "<td>".$obj->tarif."</td>";
 	print "<td>".dol_print_date($db->jdate($obj->date),'day')."</td>";
-	print "<td>".$obj->terrain."</td>";
+	$terrainsql = 'SELECT nom_terrain FROM '.MAIN_DB_PREFIX.'c_terrain WHERE rowid = '.$obj->terrain;
+	$resterrain = $db->query($terrainsql);
+	$terrain = $db->fetch_object($resterrain);
+	print "<td>".$terrain->nom_terrain."</td>";
 	print '<td><a href="basketmatch_card.php?action=delete&id='.$obj->rowid.'">'.img_delete().'</a></td>';
 	print "</tr>";
 
