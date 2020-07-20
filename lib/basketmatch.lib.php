@@ -32,7 +32,7 @@ function BasketMatchReloadPage($backtopage,$id,$ref){
             header("Location: ".dol_buildpath("/basket/basketmatch_card.php", 1).'?ref='.$ref);
         }else if ($id>0)
         {
-           header("Location: ".dol_buildpath("/basket/basketmatch_card.php", 1).'?id='.$id);
+           header("Location: ".dol_buildpath("/basket/basketmatch_list.php", 1).'?id='.$id);
         }else{
            header("Location: ".dol_buildpath("/basket/basketmatch_list.php", 1));
 
@@ -49,12 +49,12 @@ function BasketMatchPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("mymodule@mymodule");
+	$langs->load("basket@basket");
 
 	$h = 0;
 	$head = array();
-
-	$head[$h][0] = dol_buildpath("/mymodule/basketmatch_card.php", 1).'?id='.$object->id;
+	var_dump($object->id);
+	$head[$h][0] = dol_buildpath("/basket/basketmatch_card.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
@@ -64,7 +64,7 @@ function BasketMatchPrepareHead($object)
 		$nbNote = 0;
 		if (!empty($object->note_private)) $nbNote++;
 		if (!empty($object->note_public)) $nbNote++;
-		$head[$h][0] = dol_buildpath('/mymodule/basketmatch_note.php', 1).'?id='.$object->id;
+		$head[$h][0] = dol_buildpath('/basket/basketmatch_note.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 		$head[$h][2] = 'note';
@@ -76,13 +76,13 @@ function BasketMatchPrepareHead($object)
 	$upload_dir = $conf->mymodule->dir_output . "/BasketMatch/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
 	$nbLinks=Link::count($db, $object->element, $object->id);
-	$head[$h][0] = dol_buildpath("/mymodule/basketmatch_document.php", 1).'?id='.$object->id;
+	$head[$h][0] = dol_buildpath("/basket/basketmatch_document.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'document';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/mymodule/basketmatch_agenda.php", 1).'?id='.$object->id;
+	$head[$h][0] = dol_buildpath("/basket/basketmatch_agenda.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	$head[$h][2] = 'agenda';
 	$h++;
@@ -95,7 +95,7 @@ function BasketMatchPrepareHead($object)
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'BasketMatch@mymodule');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'basket@basket');
 
 	return $head;
 }

@@ -55,13 +55,13 @@ dol_include_once('/core/class/html.formprojet.class.php');
 $PHP_SELF = $_SERVER['PHP_SELF'];
 // Load traductions files requiredby by page
 //$langs->load("companies");
-$langs->load("basketmatch@basketmatch");
+$langs->load("basket@basket");
 
 // Get parameter
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
-$backtopage = GETPOST('backtopage');
+$backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm');
 $tms = GETPOST('tms', 'alpha');
@@ -165,7 +165,6 @@ if ($cancel) {
 	$action = 'create';
 }
 
-
 switch ($action) {
 	case 'update':
 		$result = $object->update($user);
@@ -183,6 +182,7 @@ switch ($action) {
 		$action = 'view';
 	case 'delete':
 		if (isset($_GET['urlfile'])) $action = 'deletefile';
+
 	case 'view':
 	case 'viewinfo':
 	case 'edit':
@@ -203,19 +203,25 @@ switch ($action) {
 		}
 		break;
 	case 'add':
-		$result = $object->create($user);
-		if ($result > 0) {
-			// Creation OK
-			// remove the tms
-			unset($_SESSION['BasketMatch'][$tms]);
-			setEventMessage('RecordSucessfullyCreated', 'mesgs');
-			BasketMatchReloadPage($backtopage, $result, '');
-
-		} else {
-			// Creation KO
-			if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else  setEventMessage('RecordNotSucessfullyCreated', 'errors');
+		if($ref == -1 || $nom == -1 || $team1 == -1 || $team2 == -1 || $tarif == -1 || $date == -1 || $terrain == -1)
+		{
+			setEventMessage('AllFieldMustBeFilled', 'errors');
 			$action = 'create';
+		} else {
+			$result = $object->create($user);
+			if ($result > 0) {
+				// Creation OK
+				// remove the tms
+				unset($_SESSION['BasketMatch'][$tms]);
+				setEventMessage('RecordSucessfullyCreated', 'mesgs');
+				BasketMatchReloadPage($backtopage, $result, '');
+
+			} else {
+				// Creation KO
+				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+				else  setEventMessage('RecordNotSucessfullyCreated', 'errors');
+				$action = 'create';
+			}
 		}
 		break;
 	case 'confirm_delete':
@@ -291,7 +297,7 @@ switch ($action) {
 		// tabs
 		if ($edit == 0 && $new == 0) { //show tabs
 			$head = BasketMatchPrepareHead($object);
-			dol_fiche_head($head, 'card', $langs->trans('BasketMatch'), 0, 'basketmatch@basketmatch');
+			dol_fiche_head($head, 'card', $langs->trans('BasketMatch'), 0, 'basket@basket');
 		} else {
 			print_fiche_titre($langs->trans('BasketMatch'));
 		}
@@ -316,9 +322,7 @@ switch ($action) {
 			//reloqd the ref
 
 		}
-
 		print '<table class="border centpercent">' . "\n";
-
 
 // show the field ref
 
@@ -470,7 +474,7 @@ switch ($action) {
 	case 'viewinfo':
 		print_fiche_titre($langs->trans('BasketMatch'));
 		$head = BasketMatchPrepareHead($object);
-		dol_fiche_head($head, 'info', $langs->trans("BasketMatch"), 0, 'basketmatch@basketmatch');
+		dol_fiche_head($head, 'info', $langs->trans("BasketMatch"), 0, 'basket@basket');
 		print '<table width="100%"><tr><td>';
 		dol_print_object_info($object);
 		print '</td></tr></table>';

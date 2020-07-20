@@ -169,7 +169,6 @@ class BasketMatch extends CommonObject
     	global $langs;
         $sql = "SELECT";
         $sql .= " t.rowid,";
-
 		$sql .= ' t.ref,';
 		$sql .= ' t.nom,';
 		$sql .= ' t.fk_soc1,';
