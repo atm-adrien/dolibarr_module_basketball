@@ -61,7 +61,7 @@ $langs->load("basket@basket");
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
-$backtopage = GETPOST('backtopage', 'alpha');
+$backtopage = GETPOST('backtopage');
 $cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm');
 $tms = GETPOST('tms', 'alpha');
@@ -167,17 +167,26 @@ if ($cancel) {
 
 switch ($action) {
 	case 'update':
-		$result = $object->update($user);
-		if ($result > 0) {
-			// Creation OK
-			unset($_SESSION['BasketMatch'][$tms]);
-			setEventMessage('RecordUpdated', 'mesgs');
 
+		if(empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1)
+		{
+			setEventMessage('AllFieldMustBeFilled', 'errors');
+			$action = 'create';
 		} else {
-			// Creation KO
-			if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else setEventMessage('RecordNotUpdated', 'errors');
+			$newdate = DateTime::createFromFormat('d/m/Y', $object->date);
+			$object->date = $newdate->getTimestamp();
+			$result = $object->update($user);
+			if ($result > 0) {
+				// Creation OK
+				unset($_SESSION['BasketMatch'][$tms]);
+				setEventMessage('RecordUpdated', 'mesgs');
 
+			} else {
+				// Creation KO
+				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+				else setEventMessage('RecordNotUpdated', 'errors');
+
+			}
 		}
 		$action = 'view';
 	case 'delete':
@@ -203,11 +212,16 @@ switch ($action) {
 		}
 		break;
 	case 'add':
-		if($ref == -1 || $nom == -1 || $team1 == -1 || $team2 == -1 || $tarif == -1 || $date == -1 || $terrain == -1)
+
+		if(empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1)
 		{
 			setEventMessage('AllFieldMustBeFilled', 'errors');
 			$action = 'create';
 		} else {
+			//Change the date type into Timestamp
+			$newdate = DateTime::createFromFormat('d/m/Y', $object->date);
+			$object->date = $newdate->getTimestamp();
+			$object->tarif = price2num($tarif, 'MU');
 			$result = $object->create($user);
 			if ($result > 0) {
 				// Creation OK

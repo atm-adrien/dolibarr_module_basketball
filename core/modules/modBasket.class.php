@@ -286,7 +286,7 @@ class modBasket extends DolibarrModules
 			'titre' => 'Match',
 			'mainmenu' => 'basket',
 			'leftmenu' => '',
-			'url' => '/basket/index.php',
+			'url' => '/basket/basketmatch_list.php',
 			'langs' => 'langs@basket', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => '$conf->basket->enabled', // Define condition to show or hide menu entry. Use '$conf->basket->enabled' if entry must be visible if module is enabled.
