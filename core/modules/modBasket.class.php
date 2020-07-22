@@ -73,7 +73,7 @@ class modBasket extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto = 'generic';
+		$this->picto = 'basket@basket';
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
 			// Set this to 1 if module has its own trigger directory (core/triggers)
@@ -113,7 +113,6 @@ class modBasket extends DolibarrModules
 		// Example: this->dirs = array("/basket/temp","/basket/subdir");
 		$this->dirs = array("/basket/temp");
 		// Config pages. Put here list of php page, stored into basket/admin directory, to use to setup module.
-		$this->config_page_url = array("setup.php@basket");
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
@@ -121,7 +120,7 @@ class modBasket extends DolibarrModules
 		$this->depends = array();
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
-		$this->langfiles = array("langs@basket");
+		$this->langfiles = array("basket@basket");
 		$this->phpmin = array(5, 5); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)

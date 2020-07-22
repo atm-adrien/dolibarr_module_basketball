@@ -71,6 +71,8 @@ $team2 = GETPOST('team2', 'int');
 $tarif = GETPOST('Tarif');
 $date = GETPOST('Date');
 $terrain = GETPOST('select_terrain', 'int');
+$confirm = GETPOST('confirm', 'alpha');
+$newref = GETPOST('newref');
 
 
 //// Get parameters
@@ -138,7 +140,7 @@ if ($cancel) {
 } else if (($action == 'add') || ($action == 'update' && ($id > 0 || !empty($ref)))) {
 	//block resubmit
 	if (empty($tms) || (!isset($_SESSION['BasketMatch'][$tms]))) {
-		setEventMessage('WrongTimeStamp_requestNotExpected', 'errors');
+		setEventMessage($langs->trans('WrongTimeStamp_requestNotExpected'), 'errors');
 		$action = ($action == 'add') ? 'create' : 'view';
 	}
 	//retrive the data
@@ -170,7 +172,7 @@ switch ($action) {
 
 		if(empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1)
 		{
-			setEventMessage('AllFieldMustBeFilled', 'errors');
+			setEventMessage($langs->trans('AllFieldMustBeFilled'), 'errors');
 			$action = 'create';
 		} else {
 			$newdate = DateTime::createFromFormat('d/m/Y', $object->date);
@@ -179,12 +181,12 @@ switch ($action) {
 			if ($result > 0) {
 				// Creation OK
 				unset($_SESSION['BasketMatch'][$tms]);
-				setEventMessage('RecordUpdated', 'mesgs');
+				setEventMessage($langs->trans('RecordUpdated'), 'mesgs');
 
 			} else {
 				// Creation KO
 				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-				else setEventMessage('RecordNotUpdated', 'errors');
+				else setEventMessage($langs->trans('RecordNotUpdated'), 'errors');
 
 			}
 		}
@@ -211,11 +213,12 @@ switch ($action) {
 			$action = 'create';
 		}
 		break;
+
 	case 'add':
 
 		if(empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1)
 		{
-			setEventMessage('AllFieldMustBeFilled', 'errors');
+			setEventMessage($langs->trans('AllFieldMustBeFilled'), 'errors');
 			$action = 'create';
 		} else {
 			//Change the date type into Timestamp
@@ -227,13 +230,13 @@ switch ($action) {
 				// Creation OK
 				// remove the tms
 				unset($_SESSION['BasketMatch'][$tms]);
-				setEventMessage('RecordSucessfullyCreated', 'mesgs');
+				setEventMessage($langs->trans('RecordSucessfullyCreated'), 'mesgs');
 				BasketMatchReloadPage($backtopage, $result, '');
 
 			} else {
 				// Creation KO
 				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-				else  setEventMessage('RecordNotSucessfullyCreated', 'errors');
+				else  setEventMessage($langs->trans('RecordNotSucessfullyCreated'), 'errors');
 				$action = 'create';
 			}
 		}
@@ -247,7 +250,7 @@ switch ($action) {
 		} else {
 			// Delete NOK
 			if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else setEventMessage('RecordNotDeleted', 'errors');
+			else setEventMessage($langs->trans('RecordNotDeleted'), 'errors');
 		}
 		BasketMatchReloadPage($backtopage, 0, '');
 		break;
@@ -270,7 +273,20 @@ if (($action == 'create') || ($action == 'edit' && ($id > 0 || !empty($ref)))) {
  *
  * Put here all code to build page
  ****************************************************/
-
+if($action == 'confirm_clone') {
+	if ($confirm == 'yes') {
+		$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
+		$result = $objectutil->createFromClone($id, $newref);
+		if ($result > 0) {
+			header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
+			exit();
+		} else {
+			$langs->load("errors");
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		}
+	}
+}
 llxHeader('', 'BasketMatch', '');
 print "<div> <!-- module body-->";
 $form = new Form($db);
@@ -295,6 +311,7 @@ jQuery(document).ready(function() {
 </script>';*/
 
 $edit = $new = 0;
+if(empty($action)) $action = 'view';
 switch ($action) {
 	case 'create':
 		$new = 1;
@@ -308,13 +325,6 @@ switch ($action) {
 		}
 	case 'view':
 	{
-		// tabs
-		if ($edit == 0 && $new == 0) { //show tabs
-			$head = BasketMatchPrepareHead($object);
-			dol_fiche_head($head, 'card', $langs->trans('BasketMatch'), 0, 'basket@basket');
-		} else {
-			print_fiche_titre($langs->trans('BasketMatch'));
-		}
 
 		print '<br>';
 		if ($edit == 1) {
@@ -332,7 +342,7 @@ switch ($action) {
 			$linkback = '<a href="' . $basedurl . (!empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 			if (!isset($object->ref))//save ref if any
 				$object->ref = $object->id;
-			print $form->showrefnav($object, 'action=view&id', $linkback, 1, 'rowid', 'ref', '');
+			print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 			//reloqd the ref
 
 		}
@@ -342,8 +352,8 @@ switch ($action) {
 
 		print "<tr>\n";
 		print '<td class="fieldrequired">' . $langs->trans('Ref') . ' </td><td>';
-		if ($edit == 1) {
-			print '<input type="text" value="' . $object->ref . '" name="ref">';
+		if ($action == 'create') {
+			print '<input type="text" value="" name="ref">';
 		} else {
 			print $object->ref;
 		}
@@ -365,7 +375,7 @@ switch ($action) {
 // show the field soc1
 
 		print "<tr>\n";
-		print '<td class="fieldrequired">' . $langs->trans('Equipe domicile') . ' </td><td>';
+		print '<td class="fieldrequired">' . $langs->trans('Soc1') . ' </td><td>';
 		if ($edit == 1) {
 			$sql_soc1 = array('table' => 'societe', 'keyfield' => 'rowid', 'fields' => 'nom', 'join' => '', 'where' => '', 'tail' => '');
 			$html_soc1 = array('name' => 'team1', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
@@ -382,7 +392,7 @@ switch ($action) {
 // show the field soc2
 
 		print "<tr>\n";
-		print '<td class="fieldrequired">' . $langs->trans('Equipe exterieure') . ' </td><td>';
+		print '<td class="fieldrequired">' . $langs->trans('Soc2') . ' </td><td>';
 		if ($edit == 1) {
 			$sql_soc2 = array('table' => 'societe', 'keyfield' => 'rowid', 'fields' => 'nom', 'join' => '', 'where' => '', 'tail' => '');
 			$html_soc2 = array('name' => 'team2', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
@@ -390,7 +400,7 @@ switch ($action) {
 			print select_sellist($sql_soc2, $html_soc2, $object->soc2, $addChoices_soc2);
 		} else {
 			$team1 = New Societe($db);
-			$team1->fetch($object->soc1);
+			$team1->fetch($object->soc2);
 			print $team1->getNomUrl('1');
 		}
 		print "</td>";
@@ -430,10 +440,10 @@ switch ($action) {
 		print '<td class="fieldrequired">' . $langs->trans('Terrain') . ' </td>';
 
 		if ($edit == 1) {
-			$sql_soc2 = array('table' => 'c_terrain', 'keyfield' => 'rowid', 'fields' => 'nom_terrain', 'join' => '', 'where' => 'active = 1', 'tail' => '');
-			$html_soc2 = array('name' => 'select_terrain', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
-			$addChoices_soc2 = null;
-			print "<td>".select_sellist($sql_soc2, $html_soc2, $object->soc2, $addChoices_soc2)."</td>";
+			$sql_terrain = array('table' => 'c_terrain', 'keyfield' => 'rowid', 'fields' => 'nom_terrain', 'join' => '', 'where' => 'active = 1', 'tail' => '');
+			$html_terrain = array('name' => 'select_terrain', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
+			$addChoices_terrain = null;
+			print "<td>".select_sellist($sql_terrain, $html_terrain, $object->terrain, $addChoices_terrain)."</td>";
 		} else {
 			$terrainsql = 'SELECT nom_terrain FROM '.MAIN_DB_PREFIX.'c_terrain WHERE rowid = '.$object->terrain;
 			$resterrain = $db->query($terrainsql);
@@ -470,10 +480,11 @@ switch ($action) {
 				//{
 				print '<a href="' . $PHP_SELF . '?id=' . $id . '&action=edit" class="butAction">' . $langs->trans('Update') . '</a>';
 				//}
-
+				print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=clone">'.$langs->trans("ToClone").'</a>';
 				//if ($user->rights->BasketMatch->delete)
 				//{
 				print '<a class="butActionDelete" href="' . $PHP_SELF . '?id=' . $id . '&action=delete">' . $langs->trans('Delete') . '</a>';
+
 				//}
 				//else
 				//{
@@ -501,6 +512,13 @@ switch ($action) {
 			if ($ret == 'html') print '<br />';
 			//to have the object to be deleted in the background
 		}
+	case 'clone':
+		{
+			// Ask confirmatio to clone
+			$formquestion = array(array('type' => 'text', 'name' => 'newref', 'label' => $langs->trans("Ref")));
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMatch', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
+		}
+
 }
 dol_fiche_end();
 

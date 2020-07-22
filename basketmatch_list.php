@@ -152,7 +152,7 @@ switch ($action) {
 		} else {
 			// Delete NOK
 			if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else setEventMessage('RecordNotDeleted', 'errors');
+			else setEventMessage($langs->trans('RecordNotDeleted'), 'errors');
 		}
 		break;
 	case 'delete':
@@ -204,6 +204,9 @@ $sql .= ' t.terrain';
 
 
 $sql .= ' FROM ' . MAIN_DB_PREFIX . 'basket_match as t';
+$sql .= ' JOIN llx_societe as s ON t.fk_soc1 = s.rowid';
+$sql .= ' JOIN llx_societe as s2 ON t.fk_soc2 = s2.rowid';
+$sql .= ' JOIN llx_c_terrain as t2 ON t.terrain = t2.rowid';
 $sqlwhere = '';
 if (isset($object->entity))
 	$sqlwhere .= ' AND t.entity = ' . $conf->entity;
@@ -221,13 +224,13 @@ if ($ls_nom) $sqlwhere .= natural_search('t.nom', $ls_nom);
 if ($ls_soc1 != -1 && !empty($ls_soc1)) $sqlwhere .= natural_search('t.fk_soc1', $ls_soc1);
 if ($ls_soc2 != -1 && !empty($ls_soc2)) $sqlwhere .= natural_search('t.fk_soc2', $ls_soc2);
 if ($ls_tarif) $sqlwhere .= natural_search(array('t.tarif'), $ls_tarif);
-if ($ls_date_month) $sqlwhere .= ' AND MONTH(t.date)="' . $ls_date_month . "'";
-if ($ls_date_year) $sqlwhere .= ' AND YEAR(t.date)="' . $ls_date_year . "'";
+if ($ls_date_month) $sqlwhere .= " AND MONTH(t.date)='" . $ls_date_month . "'";
+if ($ls_date_year) $sqlwhere .= " AND YEAR(t.date)='" . $ls_date_year . "'";
 if ($ls_terrain != -1 && !empty($ls_terrain)) $sqlwhere .= natural_search('t.terrain', $ls_terrain);
 
 //list limit
 if (!empty($sqlwhere))
-	$sql .= ' WHERE' . substr($sqlwhere, 5);
+	$sql .= ' WHERE '. substr($sqlwhere, 5);
 
 // Count total nb of records
 $nbtotalofrecords = 0;
@@ -271,7 +274,7 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	//print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
 	print_barre_liste($langs->trans("BasketMatch"), $page, $PHP_SELF, $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+
 
 	print '<form method = "POST" action = "' . $_SERVER["PHP_SELF"] . '">';
 	print '<table class = "liste" width = "100%">' . "\n";
@@ -281,15 +284,15 @@ if ($resql) {
 	print "\n";
 	print_liste_field_titre($langs->trans('Nom'), $PHP_SELF, 't.nom', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Soc1'), $PHP_SELF, 't.fk_soc1', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans('Soc1'), $PHP_SELF, 's.nom', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Soc2'), $PHP_SELF, 't.fk_soc2', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans('Soc2'), $PHP_SELF, 's2.nom', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Tarif'), $PHP_SELF, 't.tarif', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans('Tarif'));
 	print "\n";
 	print_liste_field_titre($langs->trans('Date'), $PHP_SELF, 't.date', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Terrain'), $PHP_SELF, 't.terrain', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans('Terrain'), $PHP_SELF, 't2.nom_terrain', '', $param, '', $sortfield, $sortorder);
 	print "\n";
 	print_liste_field_titre($langs->trans(' '), $PHP_SELF, '', '', $param, '', $sortfield, $sortorder);
 	print "\n";

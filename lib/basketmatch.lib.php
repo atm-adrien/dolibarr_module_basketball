@@ -29,7 +29,7 @@ function BasketMatchReloadPage($backtopage,$id,$ref){
         if (!empty($backtopage)){
             header("Location: ".$backtopage);
         }else if (!empty($ref) ){
-            header("Location: ".dol_buildpath("/basket/basketmatch_card.php", 1).'?ref='.$ref);
+            header("Location: ".dol_buildpath("/basket/basketmatch_card.php", 1).'?id='.$id.'&action=view');
         }else if ($id>0)
         {
            header("Location: ".dol_buildpath("/basket/basketmatch_list.php", 1).'?id='.$id);
@@ -53,7 +53,6 @@ function BasketMatchPrepareHead($object)
 
 	$h = 0;
 	$head = array();
-	var_dump($object->id);
 	$head[$h][0] = dol_buildpath("/basket/basketmatch_card.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';

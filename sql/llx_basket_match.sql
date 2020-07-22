@@ -1,7 +1,7 @@
 create table llx_basket_match
 (
     rowid           integer AUTO_INCREMENT PRIMARY KEY,
-    ref             varchar(128) NOT NULL,
+    ref             varchar(128) NOT NULL UNIQUE,
     nom             varchar(255) NOT NULL,
     fk_soc1         varchar(255) NOT NULL,
     fk_soc2         varchar(255) NOT NULL,

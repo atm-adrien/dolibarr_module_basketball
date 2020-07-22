@@ -457,7 +457,7 @@ class BasketMatch extends CommonObject
      *	@param	int		$fromid     Id of object to clone
      * 	@return	int					New id of clone
      */
-    function createFromClone($fromid)
+    function createFromClone($fromid, $newref)
     {
         global $user,$langs;
         $error = 0;
@@ -467,6 +467,7 @@ class BasketMatch extends CommonObject
         $object->fetch($fromid);
         $object->id = 0;
         $object->statut = 0;
+        $object->ref = $newref;
         // Clear fields
         // ...
         // Create clone
