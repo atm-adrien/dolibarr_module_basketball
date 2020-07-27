@@ -63,7 +63,6 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage');
 $cancel = GETPOST('cancel');
-$confirm = GETPOST('confirm');
 $tms = GETPOST('tms', 'alpha');
 $nom = GETPOST('Nom', 'alpha');
 $team1 = GETPOST('team1', 'int');
@@ -122,6 +121,7 @@ if (!empty($ref)) {
 	$object->ref = $ref;
 	$object->id = $id;
 	$object->fetch($id, $ref);
+	$id = $object->id;
 	$ref = dol_sanitizeFileName($object->ref);
 
 }
@@ -170,8 +170,7 @@ if ($cancel) {
 switch ($action) {
 	case 'update':
 
-		if(empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1)
-		{
+		if (empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1) {
 			setEventMessage($langs->trans('AllFieldMustBeFilled'), 'errors');
 			$action = 'create';
 		} else {
@@ -216,8 +215,7 @@ switch ($action) {
 
 	case 'add':
 
-		if(empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1)
-		{
+		if (empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1) {
 			setEventMessage($langs->trans('AllFieldMustBeFilled'), 'errors');
 			$action = 'create';
 		} else {
@@ -273,10 +271,25 @@ if (($action == 'create') || ($action == 'edit' && ($id > 0 || !empty($ref)))) {
  *
  * Put here all code to build page
  ****************************************************/
-if($action == 'confirm_clone') {
+if ($action == 'confirm_clone') {
+	var_dump('ouesh');
 	if ($confirm == 'yes') {
-		$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
-		$result = $objectutil->createFromClone($id, $newref);
+		//Ref vide non-acceptée
+		if (empty($newref)) {
+			$result = -1;
+			$object->error = $langs->trans('FilledTheRef');
+		}
+		//Ne clone pas une ref déjà existante
+		$refsql = 'SELECT * FROM ' . MAIN_DB_PREFIX . 'basket_match WHERE ref = ' . "'" . $newref . "'";
+		$resref = $db->query($refsql);
+		$testref = $db->fetch_object($resref);
+		if (!empty($testref)) {
+			$result = -1;
+			$object->error = $langs->trans('ThisRefAlreadyExists');
+		} else {
+			$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
+			$result = $objectutil->createFromClone($id, $newref);
+		}
 		if ($result > 0) {
 			header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 			exit();
@@ -285,6 +298,9 @@ if($action == 'confirm_clone') {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
+	} else {
+		var_dump('lalal');
+		BasketMatchReloadPage($backtopage, 0, '');
 	}
 }
 llxHeader('', 'BasketMatch', '');
@@ -295,6 +311,14 @@ $formproject = new FormProjets($db);
 $fuser = new User($db);
 // Put here content of your page
 
+if ($action == 'clone')
+	{
+
+		// Ask confirmation to clone
+		$formquestion = array(array('type' => 'text', 'name' => 'newref', 'label' => $langs->trans("Ref")));
+		print $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMatch', $object->ref), 'confirm_clone', $formquestion, '', 1, 250);
+		$action = 'view';
+	}
 // Example : Adding jquery code
 /*print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
@@ -311,7 +335,7 @@ jQuery(document).ready(function() {
 </script>';*/
 
 $edit = $new = 0;
-if(empty($action)) $action = 'view';
+if (empty($action)) $action = 'view';
 switch ($action) {
 	case 'create':
 		$new = 1;
@@ -382,7 +406,7 @@ switch ($action) {
 			$addChoices_soc1 = null;
 			print select_sellist($sql_soc1, $html_soc1, $object->soc1, $addChoices_soc1);
 		} else {
-			$team1 = New Societe($db);
+			$team1 = new Societe($db);
 			$team1->fetch($object->soc1);
 			print $team1->getNomUrl('1');
 		}
@@ -399,7 +423,7 @@ switch ($action) {
 			$addChoices_soc2 = null;
 			print select_sellist($sql_soc2, $html_soc2, $object->soc2, $addChoices_soc2);
 		} else {
-			$team1 = New Societe($db);
+			$team1 = new Societe($db);
 			$team1->fetch($object->soc2);
 			print $team1->getNomUrl('1');
 		}
@@ -443,12 +467,12 @@ switch ($action) {
 			$sql_terrain = array('table' => 'c_terrain', 'keyfield' => 'rowid', 'fields' => 'nom_terrain', 'join' => '', 'where' => 'active = 1', 'tail' => '');
 			$html_terrain = array('name' => 'select_terrain', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
 			$addChoices_terrain = null;
-			print "<td>".select_sellist($sql_terrain, $html_terrain, $object->terrain, $addChoices_terrain)."</td>";
+			print "<td>" . select_sellist($sql_terrain, $html_terrain, $object->terrain, $addChoices_terrain) . "</td>";
 		} else {
-			$terrainsql = 'SELECT nom_terrain FROM '.MAIN_DB_PREFIX.'c_terrain WHERE rowid = '.$object->terrain;
+			$terrainsql = 'SELECT nom_terrain FROM ' . MAIN_DB_PREFIX . 'c_terrain WHERE rowid = ' . $object->terrain;
 			$resterrain = $db->query($terrainsql);
 			$terrain = $db->fetch_object($resterrain);
-			print "<td>".$terrain->nom_terrain."</td>";
+			print "<td>" . $terrain->nom_terrain . "</td>";
 		}
 		print "\n</tr>\n";
 		print "<td></td></tr>\n";
@@ -480,7 +504,7 @@ switch ($action) {
 				//{
 				print '<a href="' . $PHP_SELF . '?id=' . $id . '&action=edit" class="butAction">' . $langs->trans('Update') . '</a>';
 				//}
-				print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=clone">'.$langs->trans("ToClone").'</a>';
+				print '<a class="butAction' . ($conf->use_javascript_ajax ? ' reposition' : '') . '" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;action=clone">' . $langs->trans("ToClone") . '</a>';
 				//if ($user->rights->BasketMatch->delete)
 				//{
 				print '<a class="butActionDelete" href="' . $PHP_SELF . '?id=' . $id . '&action=delete">' . $langs->trans('Delete') . '</a>';
@@ -512,12 +536,7 @@ switch ($action) {
 			if ($ret == 'html') print '<br />';
 			//to have the object to be deleted in the background
 		}
-	case 'clone':
-		{
-			// Ask confirmatio to clone
-			$formquestion = array(array('type' => 'text', 'name' => 'newref', 'label' => $langs->trans("Ref")));
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMatch', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
-		}
+
 
 }
 dol_fiche_end();

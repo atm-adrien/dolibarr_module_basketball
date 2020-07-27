@@ -65,6 +65,9 @@ $backtopage = GETPOST('backtopage');
 $cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm');
 $tms = GETPOST('tms', 'alpha');
+$toselect = GETPOST('toselect', 'array');
+$massaction = GETPOST('massaction', 'alpha');
+$show_files = GETPOST('show_files', 'int');
 //// Get parameters
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha') ? GETPOST('sortorder', 'alpha') : 'ASC';
@@ -80,22 +83,33 @@ if (!$removefilter)        // Both test must be present to be compatible with al
 	$ls_date_month = GETPOST('ls_date_month', 'int');
 	$ls_date_year = GETPOST('ls_date_year', 'int');
 	$ls_terrain = GETPOST('ls_terrain', 'alpha');
-
-
 }
 
 
-if ($page == -1 || !is_numeric($page)) {
-	$page = 0;
-}
-if ($page == -1) {
-	$page = 0;
-}
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+if (!$sortfield) $sortfield = "t.ref";
+if (!$sortorder) $sortorder = "ASC";
 
+$diroutputmassaction = $conf->basket->dir_output.'/temp/massgeneration/'.$user->id;
+
+$arrayfields = array(
+	't.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
+	't.nom'=>array('label'=>$langs->trans("Name"), 'checked'=>1, 'position'=>10),
+	't.fk_soc1'=>array('label'=>$langs->trans("Team1"), 'checked'=>1, 'position'=>11),
+	't.fk_soc2'=>array('label'=>$langs->trans("Team2"), 'checked'=>1, 'position'=>12),
+	't.tarif'=>array('label'=>$langs->trans("Price"), 'checked'=>1, 'position'=>13),
+	't.date'=>array('label'=>$langs->trans("Date"), 'checked'=>1, 'position'=>19),
+	't.terrain'=>array('label'=>$langs->trans('Terrain'), 'checked'=>0, 'position'=>20));
 
 // uncomment to avoid resubmision
 //if(isset( $_SESSION['basketmatch_class'][$tms]))
@@ -130,8 +144,11 @@ if (!empty($ref)) {
 	$object->id = $id;
 	$object->fetch($id, $ref);
 	$ref = dol_sanitizeFileName($object->ref);
-
 }
+$objectclass = 'basketmatch';
+$uploaddir = $conf->basket->dir_output;
+$permissiontodelete = $user->rights->basket->supprimer;
+include DOL_DOCUMENT_ROOT . '/core/actions_massactions.inc.php';
 
 
 /*******************************************************************
@@ -156,9 +173,12 @@ switch ($action) {
 		}
 		break;
 	case 'delete':
-		if ($action == 'delete' && ($id > 0 || $ref != "")) {
-			$ret = $form->form_confirm(dol_buildpath('/BasketMatch_card.php', 1) . '?action=confirm_delete&id=' . $id, $langs->trans('DeleteBasketMatch'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
-			if ($ret == 'html') print '<br />';
+		if ($action == 'delete' && !empty($toselect)) {
+			foreach ($toselect as $cbselect)
+			{
+				$delsql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'basket_match WHERE rowid = ' . $cbselect;
+				$resdelsql = $db->query($delsql);
+			}
 			//to have the object to be deleted in the background\
 		}
 
@@ -230,16 +250,20 @@ if ($ls_terrain != -1 && !empty($ls_terrain)) $sqlwhere .= natural_search('t.ter
 
 //list limit
 if (!empty($sqlwhere))
-	$sql .= ' WHERE '. substr($sqlwhere, 5);
+	$sql .= ' WHERE ' . substr($sqlwhere, 5);
 
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$sqlcount = 'SELECT COUNT(*) as count FROM ' . MAIN_DB_PREFIX . 'basket_match as t';
-	if (!empty($sqlwhere))
-		$sqlcount .= ' WHERE ' . substr($sqlwhere, 5);
-	$result = $db->query($sqlcount);
-	$nbtotalofrecords = ($result) ? $objcount = $db->fetch_object($result)->count : 0;
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		$result = $db->query($sql);
+		$nbtotalofrecords = $db->num_rows($result);
+		if (($page * $limit) > $nbtotalofrecords)    // if total resultset is smaller then paging size (filtering), goto and load page 0
+		{
+			$page = 0;
+			$offset = 0;
+		}
+	}
 }
 if (!empty($sortfield)) {
 	$sql .= $db->order($sortfield, $sortorder);
@@ -251,12 +275,12 @@ if (!empty($limit)) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
 
-
 //execute SQL
 dol_syslog($script_file, LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$param = '';
+	$arrayofselected = is_array($toselect) ? $toselect : array();
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage=' . urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit=' . urlencode($limit);
 	if (!empty($ls_ref)) $param .= '&ls_ref = ' . urlencode($ls_ref);
@@ -270,13 +294,39 @@ if ($resql) {
 
 
 	if ($filter && $filter != -1) $param .= '&filtre=' . urlencode($filter);
+	// List of mass actions available
+	$arrayofmassactions = array(
+		'predelete' => $langs->trans("Delete"),
+		//'builddoc'=>$langs->trans("PDFMerge"),
+		//'presend'=>$langs->trans("SendByMail"),
+	);
+	$rightskey = 'basketmatch';
+	if ($user->rights->{$rightskey}->supprimer) $arrayofmassactions['predelete'] = "<span class='fa fa-trash paddingrightonly'></span>" . $langs->trans("Delete");
+	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+
+	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	if ($massactionbutton) $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 	$num = $db->num_rows($resql);
 	//print_barre_liste function defined in /core/lib/function.lib.php, possible to add a picto
-	print_barre_liste($langs->trans("BasketMatch"), $page, $PHP_SELF, $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
+	$newcardbutton = '';
 
+	//NewCard Button
+	$params = array();
+	$label = 'NewBasketMatch';
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/custom/basket/basketmatch_card.php?action=create', '', 1, $params);
 
 	print '<form method = "POST" action = "' . $_SERVER["PHP_SELF"] . '">';
+	print_barre_liste($langs->trans("BasketMatch"), $page, $PHP_SELF, $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'basket@basket', 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+	$topicmail = "Information";
+	$modelmail = "basket";
+	$objecttmp = new BasketMatch($db);
+	$trackid = 'match'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
 	print '<table class = "liste" width = "100%">' . "\n";
 	//TITLE
 	print '<tr class = "liste_titre">';
@@ -351,11 +401,12 @@ if ($resql) {
 
 	$i = 0;
 	$basedurl = dirname($PHP_SELF) . '/basketmatch_card.php?action=view&id=';
+	$totaltarif = 0;
 	while ($i < $num && $i < $limit) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
 			// You can use here results
-			print "<td>" . $object->getNomUrl($obj->ref, '', $obj->ref, 0) . "</td>";
+			print "<td>" . $object->getNomUrl($obj->ref, '', $obj->ref, 1) . "</td>";
 			print "<td>" . $obj->nom . "</td>";
 			if (class_exists('Societe')) {
 				$team1 = new Societe($db);
@@ -371,18 +422,39 @@ if ($resql) {
 			} else {
 				print print_sellist($sql_soc2, $obj->fk_soc2);
 			}
+			$totaltarif += $obj->tarif;
 			print "<td>" . $obj->tarif . "</td>";
 			print "<td>" . dol_print_date($db->jdate($obj->date), 'day') . "</td>";
 			$terrainsql = 'SELECT nom_terrain FROM ' . MAIN_DB_PREFIX . 'c_terrain WHERE rowid = ' . $obj->terrain;
 			$resterrain = $db->query($terrainsql);
 			$terrain = $db->fetch_object($resterrain);
 			print "<td>" . $terrain->nom_terrain . "</td>";
-			print '<td><a href="basketmatch_card.php?action=delete&id=' . $obj->rowid . '">' . img_delete() . '</a></td>';
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			{
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
+				print '<input id="cb' . $obj->rowid . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $obj->rowid . '"' . ($selected ? ' checked="checked"' : '') . '>';
+			}
+			print '</td>';
+
 			print "</tr>";
+
 
 		}
 		$i++;
 	}
+	print '<tr class="liste_total">';
+	if ($num < $limit) print '<td class="left">' . $langs->trans("Total") . '</td>';
+	else print '<td class="left">' . $langs->trans("Totalforthispage") . '</td>';
+	print '<td></td>';
+	print '<td></td>';
+	print '<td></td>';
+	print "<td>" . price($totaltarif) . "</td>";
+	print '<td></td>';
+	print '<td></td>';
+	print '<td></td>';
+	print '</tr>';
 } else {
 	$error++;
 	dol_print_error($db);
@@ -390,9 +462,6 @@ if ($resql) {
 
 print '</table>' . "\n";
 print '</form>' . "\n";
-// new button
-print '<a href = "basketmatch_card.php?action=create" class = "butAction" role = "button">' . $langs->trans('New');
-print ' ' . $langs->trans('BasketMatch') . "</a>\n";
 
 
 // End of page

@@ -4,7 +4,7 @@ Nom_terrain = Nom du terrain
 Soc1 = Equipe domicile
 Soc2 = Equipe exterieure
 BasketMatch = Match de BasketBall
-
+NewBasketMatch = Nouveau Match
 
 // Errors
 AllFieldMustBeFilled = Tous les champs doivent être remplis
@@ -14,6 +14,8 @@ noIdPresent = Aucun ID n'est présent
 RecordSucessfullyCreated = Enregistrement crée avec succés
 RecordNotSucessfullyCreated = Echec de la création de l'enregistrement
 RecordDeleted = Enregistrement supprimé
-RecordNotDeleted = Echec de la suppression de l'enregistrement
-BackToList = Retour à la liste
+RecordNotDeleted = Echec de la suppression
+BackToList = Retour liste
 WrongTimeStamp_requestNotExpected = Mauvais horodatage, requête non-attendue
+FilledTheRef = Le champ "Ref" doit être rempli
+ThisRefAlreadyExists = La référence existe déjà

@@ -276,7 +276,7 @@ class BasketMatch extends CommonObject
      *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
      *	@return		string						String with URL
      */
-    function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=0)
+    function getNomUrl($htmlcontent,$id=0,$ref='',$withpicto=1)
     {
 	global $conf, $langs;
 
@@ -313,7 +313,7 @@ class BasketMatch extends CommonObject
         }
         $lienfin = empty($lien)?'':'</a>';
 
-    	$picto = 'generic';
+    	$picto = 'littlebasket@basket';
         $label = '<u>' . $langs->trans("spread") . '</u>';
         $label .= '<br>';
         if($ref){
@@ -323,9 +323,8 @@ class BasketMatch extends CommonObject
         }
 
 
-
     	if ($withpicto == 1){
-            $result .= ($lien.img_object($label,$picto).$htmlcontent.$lienfin);
+            $result .= ($lien.img_object($label,$picto)."&nbsp;".$htmlcontent.$lienfin);
         }else if ($withpicto == 2) {
             $result .= $lien.img_object($label,$picto).$lienfin;
         }else{

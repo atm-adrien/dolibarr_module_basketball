@@ -32,7 +32,7 @@ function BasketMatchReloadPage($backtopage,$id,$ref){
             header("Location: ".dol_buildpath("/basket/basketmatch_card.php", 1).'?id='.$id.'&action=view');
         }else if ($id>0)
         {
-           header("Location: ".dol_buildpath("/basket/basketmatch_list.php", 1).'?id='.$id);
+           header("Location: ".dol_buildpath("/basket/basketmatch_card.php", 1).'?id='.$id);
         }else{
            header("Location: ".dol_buildpath("/basket/basketmatch_list.php", 1));
 
@@ -75,16 +75,7 @@ function BasketMatchPrepareHead($object)
 	$upload_dir = $conf->mymodule->dir_output . "/BasketMatch/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
 	$nbLinks=Link::count($db, $object->element, $object->id);
-	$head[$h][0] = dol_buildpath("/basket/basketmatch_document.php", 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
-	$head[$h][2] = 'document';
-	$h++;
 
-	$head[$h][0] = dol_buildpath("/basket/basketmatch_agenda.php", 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("Events");
-	$head[$h][2] = 'agenda';
-	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
