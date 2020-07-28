@@ -83,6 +83,7 @@ if (!$removefilter)        // Both test must be present to be compatible with al
 	$ls_date_month = GETPOST('ls_date_month', 'int');
 	$ls_date_year = GETPOST('ls_date_year', 'int');
 	$ls_terrain = GETPOST('ls_terrain', 'alpha');
+	$ls_categories = GETPOST('ls_categories', 'alpha');
 }
 
 
@@ -99,17 +100,17 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = "t.ref";
 if (!$sortorder) $sortorder = "ASC";
 
-$diroutputmassaction = $conf->basket->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->basket->dir_output . '/temp/massgeneration/' . $user->id;
 
 $arrayfields = array(
-	't.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+	't.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
 	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
-	't.nom'=>array('label'=>$langs->trans("Name"), 'checked'=>1, 'position'=>10),
-	't.fk_soc1'=>array('label'=>$langs->trans("Team1"), 'checked'=>1, 'position'=>11),
-	't.fk_soc2'=>array('label'=>$langs->trans("Team2"), 'checked'=>1, 'position'=>12),
-	't.tarif'=>array('label'=>$langs->trans("Price"), 'checked'=>1, 'position'=>13),
-	't.date'=>array('label'=>$langs->trans("Date"), 'checked'=>1, 'position'=>19),
-	't.terrain'=>array('label'=>$langs->trans('Terrain'), 'checked'=>0, 'position'=>20));
+	't.nom' => array('label' => $langs->trans("Name"), 'checked' => 1, 'position' => 10),
+	't.fk_soc1' => array('label' => $langs->trans("Team1"), 'checked' => 1, 'position' => 11),
+	't.fk_soc2' => array('label' => $langs->trans("Team2"), 'checked' => 1, 'position' => 12),
+	't.tarif' => array('label' => $langs->trans("Price"), 'checked' => 1, 'position' => 13),
+	't.date' => array('label' => $langs->trans("Date"), 'checked' => 1, 'position' => 19),
+	't.terrain' => array('label' => $langs->trans('Terrain'), 'checked' => 0, 'position' => 20));
 
 // uncomment to avoid resubmision
 //if(isset( $_SESSION['basketmatch_class'][$tms]))
@@ -174,8 +175,7 @@ switch ($action) {
 		break;
 	case 'delete':
 		if ($action == 'delete' && !empty($toselect)) {
-			foreach ($toselect as $cbselect)
-			{
+			foreach ($toselect as $cbselect) {
 				$delsql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'basket_match WHERE rowid = ' . $cbselect;
 				$resdelsql = $db->query($delsql);
 			}
@@ -220,13 +220,15 @@ $sql .= ' t.fk_soc1,';
 $sql .= ' t.fk_soc2,';
 $sql .= ' t.tarif,';
 $sql .= ' t.date,';
-$sql .= ' t.terrain';
+$sql .= ' t.terrain,';
+$sql .= ' t.categ';
 
 
 $sql .= ' FROM ' . MAIN_DB_PREFIX . 'basket_match as t';
 $sql .= ' JOIN llx_societe as s ON t.fk_soc1 = s.rowid';
 $sql .= ' JOIN llx_societe as s2 ON t.fk_soc2 = s2.rowid';
 $sql .= ' JOIN llx_c_terrain as t2 ON t.terrain = t2.rowid';
+$sql .= ' JOIN llx_c_categories as c ON t.categ = c.rowid';
 $sqlwhere = '';
 if (isset($object->entity))
 	$sqlwhere .= ' AND t.entity = ' . $conf->entity;
@@ -324,8 +326,8 @@ if ($resql) {
 	$topicmail = "Information";
 	$modelmail = "basket";
 	$objecttmp = new BasketMatch($db);
-	$trackid = 'match'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+	$trackid = 'match' . $object->id;
+	include DOL_DOCUMENT_ROOT . '/core/tpl/massactions_pre.tpl.php';
 
 	print '<table class = "liste" width = "100%">' . "\n";
 	//TITLE
@@ -343,6 +345,8 @@ if ($resql) {
 	print_liste_field_titre($langs->trans('Date'), $PHP_SELF, 't.date', '', $param, '', $sortfield, $sortorder);
 	print "\n";
 	print_liste_field_titre($langs->trans('Terrain'), $PHP_SELF, 't2.nom_terrain', '', $param, '', $sortfield, $sortorder);
+	print "\n";
+	print_liste_field_titre($langs->trans('Categories'), $PHP_SELF, 'c.libelle', '', $param, '', $sortfield, $sortorder);
 	print "\n";
 	print_liste_field_titre($langs->trans(' '), $PHP_SELF, '', '', $param, '', $sortfield, $sortorder);
 	print "\n";
@@ -383,12 +387,19 @@ if ($resql) {
 	$syear = $ls_date_year;
 	$formother->select_year($syear ? $syear : -1, 'ls_date_year', 1, 20, 5);
 	print '</td>';
-//Search field forterrain
+//Search field for terrain
 	print '<td class="liste_titre" colspan="1" >';
 	$sql_terrain = array('table' => 'c_terrain', 'keyfield' => 't.rowid', 'fields' => 't.nom_terrain', 'join' => '', 'where' => '', 'tail' => '');
 	$html_terrain = array('name' => 'ls_terrain', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
 	$addChoices_terrain = null;
 	print select_sellist($sql_terrain, $html_terrain, $ls_terrain, $addChoices_terrain);
+	print '</td>';
+//Search field for categories
+	print '<td class="liste_titre" colspan="1" >';
+	$sql_categ = array('table' => 'c_categories', 'keyfield' => 't.rowid', 'fields' => 't.codecat', 'join' => '', 'where' => '', 'tail' => '');
+	$html_categ = array('name' => 'ls_categories', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
+	$addChoices_categ = null;
+	print select_sellist($sql_categ, $html_categ, $ls_categories, $addChoices_categ);
 	print '</td>';
 
 
@@ -408,6 +419,7 @@ if ($resql) {
 			// You can use here results
 			print "<td>" . $object->getNomUrl($obj->ref, '', $obj->ref, 1) . "</td>";
 			print "<td>" . $obj->nom . "</td>";
+			//For team1
 			if (class_exists('Societe')) {
 				$team1 = new Societe($db);
 				$team1->fetch($obj->fk_soc1);
@@ -415,6 +427,7 @@ if ($resql) {
 			} else {
 				print print_sellist($sql_soc1, $obj->fk_soc1);
 			}
+			//For team2
 			if (class_exists('Societe')) {
 				$team2 = new Societe($db);
 				$team2->fetch($obj->fk_soc2);
@@ -422,14 +435,24 @@ if ($resql) {
 			} else {
 				print print_sellist($sql_soc2, $obj->fk_soc2);
 			}
+			//For tarif
 			$totaltarif += $obj->tarif;
 			print "<td>" . $obj->tarif . "</td>";
+			//For date
 			print "<td>" . dol_print_date($db->jdate($obj->date), 'day') . "</td>";
+			//For terrain
 			$terrainsql = 'SELECT nom_terrain FROM ' . MAIN_DB_PREFIX . 'c_terrain WHERE rowid = ' . $obj->terrain;
 			$resterrain = $db->query($terrainsql);
 			$terrain = $db->fetch_object($resterrain);
 			print "<td>" . $terrain->nom_terrain . "</td>";
+			//For categories
+			$categsql = 'SELECT codecat FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $obj->categ;
+			$rescateg = $db->query($categsql);
+			$categ = $db->fetch_object($rescateg);
+			print "<td>" . $categ->codecat . "</td>";
 			print '<td class="nowrap center">';
+
+
 			if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			{
 				$selected = 0;
@@ -451,6 +474,7 @@ if ($resql) {
 	print '<td></td>';
 	print '<td></td>';
 	print "<td>" . price($totaltarif) . "</td>";
+	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';

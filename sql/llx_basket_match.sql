@@ -7,7 +7,16 @@ create table llx_basket_match
     fk_soc2         varchar(255) NOT NULL,
     tarif           decimal(5,2) NOT NULL,
     date            datetime NOT NULL,
-    terrain         varchar(255) NOT NULL
+    terrain         varchar(255) NOT NULL,
+    categ           varchar(255) NOT NULL
+);
+
+create table llx_c_categories
+(
+    rowid           integer AUTO_INCREMENT PRIMARY KEY,
+    codecat         varchar(6) NOT NULL,
+    libelle         varchar(255) NOT NULL,
+    active          int NOT NULL
 );
 
 create table llx_c_terrain
@@ -18,3 +27,5 @@ create table llx_c_terrain
     ville           varchar(255) NOT NULL,
     active          int NOT NULL
 )
+
+

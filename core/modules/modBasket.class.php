@@ -177,24 +177,53 @@ class modBasket extends DolibarrModules
 		// Dictionaries
 		$this->dictionaries = array(
 			// List of tables we want to see into dictonnary editor
-			'tabname' => array(MAIN_DB_PREFIX . "c_terrain"),
+			'tabname' => array(
+					MAIN_DB_PREFIX . "c_terrain",
+					MAIN_DB_PREFIX . "c_categories"
+			),
 			// Label of tables
-			'tablib' => array("DictionaryTerrain" => $langs->trans('Basket - Terrains/Gymnases')),
+			'tablib' => array(
+				"DictionaryTerrain" => $langs->trans('Basket - Terrains/Gymnases'),
+				"DictionaryCategories" => $langs->trans('Basket - Catégories match')
+			),
 			// Request to select fields
-			'tabsql' => array('SELECT rowid, code, nom_terrain, ville, active FROM ' . MAIN_DB_PREFIX . 'c_terrain'),
+			'tabsql' => array(
+				'SELECT rowid, code, nom_terrain, ville, active FROM ' . MAIN_DB_PREFIX . 'c_terrain',
+				'SELECT rowid, codecat, libelle, active FROM ' . MAIN_DB_PREFIX . 'c_categories'
+			),
 			// Sort order
-			'tabsqlsort' => array("nom_terrain ASC"),
+			'tabsqlsort' => array(
+				"nom_terrain ASC",
+				"libelle ASC"
+			),
 			// List of fields (result of select to show dictionary)
-			'tabfield' => array('code,' . $langs->trans("nom_terrain") . ',ville'),
+			'tabfield' => array(
+				'code,' . $langs->trans("nom_terrain") . ',ville',
+				'codecat,' . $langs->trans("libelle")
+			),
 			// List of fields (list of fields to edit a record)
-			'tabfieldvalue' => array("code,nom_terrain,ville"),
+			'tabfieldvalue' => array(
+				"code,nom_terrain,ville",
+				"codecat,libelle"
+			),
 			// List of fields (list of fields for insert)
-			'tabfieldinsert' => array("code,nom_terrain,ville"),
+			'tabfieldinsert' => array(
+				"code,nom_terrain,ville",
+				"codecat,libelle"
+			),
 			// Name of columns with primary key (try to always name it 'rowid')
-			'tabrowid' => array("rowid"),
+			'tabrowid' => array(
+				"rowid",
+				"rowid"
+			),
 			// Condition to show each dictionary
-			'tabcond' => array($conf->basket->enabled)
+			'tabcond' => array(
+				$conf->basket->enabled,
+				$conf->basket->enabled
+			)
 		);
+
+
 		/* Example:
 		$this->dictionaries=array(
 			'langs'=>'langs@basket',

@@ -70,6 +70,7 @@ $team2 = GETPOST('team2', 'int');
 $tarif = GETPOST('Tarif');
 $date = GETPOST('Date');
 $terrain = GETPOST('select_terrain', 'int');
+$categ = GETPOST('select_categ', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $newref = GETPOST('newref');
 
@@ -137,40 +138,43 @@ if (!empty($ref)) {
 $error = 0;
 if ($cancel) {
 	BasketMatchReloadPage($backtopage, $id, $ref);
-} else if (($action == 'add') || ($action == 'update' && ($id > 0 || !empty($ref)))) {
-	//block resubmit
-	if (empty($tms) || (!isset($_SESSION['BasketMatch'][$tms]))) {
-		setEventMessage($langs->trans('WrongTimeStamp_requestNotExpected'), 'errors');
-		$action = ($action == 'add') ? 'create' : 'view';
-	}
-	//retrive the data
-	$object->ref = $ref;
-	$object->nom = $nom;
-	$object->terrain = $terrain;
-	$object->soc1 = $team1;
-	$object->soc2 = $team2;
-	$object->tarif = $tarif;
-	$object->date = $date;
+} else {
+	if (($action == 'add') || ($action == 'update' && ($id > 0 || !empty($ref)))) {
+		//block resubmit
+		if (empty($tms) || (!isset($_SESSION['BasketMatch'][$tms]))) {
+			setEventMessage($langs->trans('WrongTimeStamp_requestNotExpected'), 'errors');
+			$action = ($action == 'add') ? 'create' : 'view';
+		}
+		//retrive the data
+		$object->ref = $ref;
+		$object->nom = $nom;
+		$object->terrain = $terrain;
+		$object->soc1 = $team1;
+		$object->soc2 = $team2;
+		$object->tarif = $tarif;
+		$object->date = $date;
+		$object->categ = $categ;
 
 // test here if the post data is valide
-	/*
-	if($object->prop1==0 || $object->prop2==0)
-	{
-		if ($id>0 || $ref!='')
-		   $action='create';
-		else
-		   $action='edit';
-	}
-	 */
+		/*
+		if($object->prop1==0 || $object->prop2==0)
+		{
+			if ($id>0 || $ref!='')
+			   $action='create';
+			else
+			   $action='edit';
+		}
+		 */
 
-} else if ($id == 0 && $ref == '' && $action != 'create') {
-	$action = 'create';
+	} else if ($id == 0 && $ref == '' && $action != 'create') {
+		$action = 'create';
+	}
 }
 
 switch ($action) {
 	case 'update':
 
-		if (empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1) {
+		if (empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1 || $categ == -1) {
 			setEventMessage($langs->trans('AllFieldMustBeFilled'), 'errors');
 			$action = 'create';
 		} else {
@@ -215,7 +219,7 @@ switch ($action) {
 
 	case 'add':
 
-		if (empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1) {
+		if (empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1 || $categ == -1) {
 			setEventMessage($langs->trans('AllFieldMustBeFilled'), 'errors');
 			$action = 'create';
 		} else {
@@ -239,6 +243,7 @@ switch ($action) {
 			}
 		}
 		break;
+
 	case 'confirm_delete':
 
 		$result = ($confirm == 'yes') ? $object->delete($user) : 0;
@@ -272,7 +277,6 @@ if (($action == 'create') || ($action == 'edit' && ($id > 0 || !empty($ref)))) {
  * Put here all code to build page
  ****************************************************/
 if ($action == 'confirm_clone') {
-	var_dump('ouesh');
 	if ($confirm == 'yes') {
 		//Ref vide non-acceptée
 		if (empty($newref)) {
@@ -298,9 +302,6 @@ if ($action == 'confirm_clone') {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
-	} else {
-		var_dump('lalal');
-		BasketMatchReloadPage($backtopage, 0, '');
 	}
 }
 llxHeader('', 'BasketMatch', '');
@@ -313,7 +314,6 @@ $fuser = new User($db);
 
 if ($action == 'clone')
 	{
-
 		// Ask confirmation to clone
 		$formquestion = array(array('type' => 'text', 'name' => 'newref', 'label' => $langs->trans("Ref")));
 		print $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMatch', $object->ref), 'confirm_clone', $formquestion, '', 1, 250);
@@ -475,6 +475,25 @@ switch ($action) {
 			print "<td>" . $terrain->nom_terrain . "</td>";
 		}
 		print "\n</tr>\n";
+
+// show the field Categories
+
+		print "<tr>\n";
+		print '<td class="fieldrequired">' . $langs->trans('Categories') . ' </td>';
+
+		if ($edit == 1) {
+			$sql_categ = array('table' => 'c_categories', 'keyfield' => 'rowid', 'fields' => 'codecat', 'join' => '', 'where' => 'active = 1', 'tail' => '');
+			$html_categ = array('name' => 'select_categ', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
+			$addChoices_categ = null;
+			print "<td>" . select_sellist($sql_categ, $html_categ, $object->categ, $addChoices_categ) . "</td>";
+		} else {
+			$categsql = 'SELECT codecat FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
+			$rescateg = $db->query($categsql);
+			$categorie = $db->fetch_object($rescateg);
+			print "<td>" . $categorie->codecat . "</td>";
+		}
+		print "\n</tr>\n";
+
 		print "<td></td></tr>\n";
 
 
