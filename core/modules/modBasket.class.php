@@ -189,7 +189,7 @@ class modBasket extends DolibarrModules
 			// Request to select fields
 			'tabsql' => array(
 				'SELECT rowid, code, nom_terrain, ville, active FROM ' . MAIN_DB_PREFIX . 'c_terrain',
-				'SELECT rowid, codecat, libelle, active FROM ' . MAIN_DB_PREFIX . 'c_categories'
+				'SELECT rowid, codecat, libelle, prixpardef, active FROM ' . MAIN_DB_PREFIX . 'c_categories'
 			),
 			// Sort order
 			'tabsqlsort' => array(
@@ -199,17 +199,17 @@ class modBasket extends DolibarrModules
 			// List of fields (result of select to show dictionary)
 			'tabfield' => array(
 				'code,' . $langs->trans("nom_terrain") . ',ville',
-				'codecat,' . $langs->trans("libelle")
+				'codecat,' . $langs->trans("libelle") . ',prixpardef'
 			),
 			// List of fields (list of fields to edit a record)
 			'tabfieldvalue' => array(
 				"code,nom_terrain,ville",
-				"codecat,libelle"
+				"codecat,libelle,prixpardef"
 			),
 			// List of fields (list of fields for insert)
 			'tabfieldinsert' => array(
 				"code,nom_terrain,ville",
-				"codecat,libelle"
+				"codecat,libelle,prixpardef"
 			),
 			// Name of columns with primary key (try to always name it 'rowid')
 			'tabrowid' => array(

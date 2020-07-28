@@ -174,12 +174,19 @@ if ($cancel) {
 switch ($action) {
 	case 'update':
 
-		if (empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1 || $categ == -1) {
+		if (empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || $date == -1 || $terrain == -1) {
 			setEventMessage($langs->trans('AllFieldMustBeFilled'), 'errors');
 			$action = 'create';
 		} else {
 			$newdate = DateTime::createFromFormat('d/m/Y', $object->date);
 			$object->date = $newdate->getTimestamp();
+			if (empty($tarif)) {
+				var_dump($object->tarif);
+				$tarifsql = 'SELECT prixpardef FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
+				$restarif = $db->query($tarifsql);
+				$tar = $db->fetch_object($restarif);
+				$object->tarif = $tar->prixpardef;
+			}
 			$result = $object->update($user);
 			if ($result > 0) {
 				// Creation OK
@@ -201,6 +208,12 @@ switch ($action) {
 	case 'viewinfo':
 	case 'edit':
 		// fetch the object data if possible
+		if (empty($tarif) && $categ != -1) {
+			$tarifsql = 'SELECT prixpardef FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
+			$restarif = $db->query($tarifsql);
+			$tar = $db->fetch_object($restarif);
+			$object->tarif = $tar->prixpardef;
+		}
 		if ($id > 0 || !empty($ref)) {
 			$result = $object->fetch($id, $ref);
 			if ($result < 0) {
@@ -219,14 +232,21 @@ switch ($action) {
 
 	case 'add':
 
-		if (empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || empty($tarif) || $date == -1 || $terrain == -1 || $categ == -1) {
+		if (empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || $date == -1 || $terrain == -1) {
 			setEventMessage($langs->trans('AllFieldMustBeFilled'), 'errors');
 			$action = 'create';
 		} else {
 			//Change the date type into Timestamp
 			$newdate = DateTime::createFromFormat('d/m/Y', $object->date);
 			$object->date = $newdate->getTimestamp();
-			$object->tarif = price2num($tarif, 'MU');
+			if (empty($tarif) && $categ != -1) {
+				$tarifsql = 'SELECT prixpardef FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
+				$restarif = $db->query($tarifsql);
+				$tar = $db->fetch_object($restarif);
+				$object->tarif = $tar->prixpardef;
+			} else {
+				$object->tarif = price2num($tarif, 'MU');
+			}
 			$result = $object->create($user);
 			if ($result > 0) {
 				// Creation OK
@@ -312,13 +332,12 @@ $formproject = new FormProjets($db);
 $fuser = new User($db);
 // Put here content of your page
 
-if ($action == 'clone')
-	{
-		// Ask confirmation to clone
-		$formquestion = array(array('type' => 'text', 'name' => 'newref', 'label' => $langs->trans("Ref")));
-		print $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMatch', $object->ref), 'confirm_clone', $formquestion, '', 1, 250);
-		$action = 'view';
-	}
+if ($action == 'clone') {
+	// Ask confirmation to clone
+	$formquestion = array(array('type' => 'text', 'name' => 'newref', 'label' => $langs->trans("Ref")));
+	print $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMatch', $object->ref), 'confirm_clone', $formquestion, '', 1, 250);
+	$action = 'view';
+}
 // Example : Adding jquery code
 /*print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
@@ -433,11 +452,17 @@ switch ($action) {
 // show the field tarif
 
 		print "<tr>\n";
-		print '<td class="fieldrequired">' . $langs->trans('Tarif') . ' </td><td>';
+		print '<td>' . $langs->trans('Tarif') . ' </td><td>';
 		if ($edit == 1) {
 			print '<input type="text" value="' . $object->tarif . '" name="Tarif">';
 		} else {
-			print $object->tarif;
+			if (empty($tarif) && $categ != -1) {
+				$tarifsql = 'SELECT prixpardef FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
+				$restarif = $db->query($tarifsql);
+				$tar = $db->fetch_object($restarif);
+				$object->tarif = $tar;
+			}
+			print $object->tarif->prixpardef;
 		}
 		print "</td>";
 		print "\n</tr>\n";
@@ -479,7 +504,7 @@ switch ($action) {
 // show the field Categories
 
 		print "<tr>\n";
-		print '<td class="fieldrequired">' . $langs->trans('Categories') . ' </td>';
+		print '<td>' . $langs->trans('Categories') . ' </td>';
 
 		if ($edit == 1) {
 			$sql_categ = array('table' => 'c_categories', 'keyfield' => 'rowid', 'fields' => 'codecat', 'join' => '', 'where' => 'active = 1', 'tail' => '');

@@ -517,7 +517,6 @@ class BasketMatch extends CommonObject
 		if (!empty($this->terrain)) $this->terrain = trim($this->terrain);
 		if (!empty($this->categ)) $this->categ = trim($this->categ);
 
-
 	}
 
 	/**
@@ -529,7 +528,6 @@ class BasketMatch extends CommonObject
 	function setSQLfields($user)
 	{
 		$sql = '';
-
 		$sql .= ' ref = ' . (empty($this->ref) != 0 ? 'null' : "'" . $this->db->escape($this->ref) . "'") . ',';
 		$sql .= ' nom = ' . (empty($this->nom) != 0 ? 'null' : "'" . $this->db->escape($this->nom) . "'") . ',';
 		$sql .= ' fk_soc1 = ' . (empty($this->soc1) != 0 ? 'null' : "'" . $this->db->escape($this->soc1) . "'") . ',';
@@ -538,7 +536,6 @@ class BasketMatch extends CommonObject
 		$sql .= ' date = ' . (dol_strlen($this->date) != 0 ? "'" . $this->db->idate($this->date) . "'" : 'null') . ',';
 		$sql .= ' terrain = ' . (empty($this->terrain) != 0 ? 'null' : "'" . $this->db->escape($this->terrain) . "'") . ',';
 		$sql .= ' categ = ' . (empty($this->categ) != 0 ? 'null' : "'" . $this->db->escape($this->categ) . "'") . '';
-
 
 		return $sql;
 	}
