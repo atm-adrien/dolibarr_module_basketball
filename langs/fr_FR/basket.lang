@@ -9,7 +9,8 @@ ConfirmCloneMatch = Êtes-vous sur de vouloir cloner ce match avec cette ref ?
 Categ = Categorie
 Codecat = Code catégories
 Prixpardef = Prix par défaut
-
+BasketSetup = Configuration du module Basket
+DefaultPrice = Prix par défaut du ticket d'un match
 
 
 // Errors

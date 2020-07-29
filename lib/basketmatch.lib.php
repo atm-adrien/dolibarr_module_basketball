@@ -89,3 +89,19 @@ function BasketMatchPrepareHead($object)
 
 	return $head;
 }
+function basket_admin_prepare_head()
+{
+	global $langs;
+
+	$langs->load("basket");
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/user.php';
+	$head[$h][1] = $langs->trans("Parameters");
+	$head[$h][2] = 'card';
+	$h++;
+
+
+	return $head;
+}

@@ -208,7 +208,7 @@ switch ($action) {
 	case 'viewinfo':
 	case 'edit':
 		// fetch the object data if possible
-		if (empty($tarif) && $categ != -1) {
+		if (isset($tarif) || $categ == -1) {
 			$tarifsql = 'SELECT prixpardef FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
 			$restarif = $db->query($tarifsql);
 			$tar = $db->fetch_object($restarif);
@@ -239,7 +239,7 @@ switch ($action) {
 			//Change the date type into Timestamp
 			$newdate = DateTime::createFromFormat('d/m/Y', $object->date);
 			$object->date = $newdate->getTimestamp();
-			$tarifglob = 100.00;
+			$tarifglob = $conf->global->BM_DEFAULT_PRICE;
 			if (empty($tarif) && $categ != -1) {
 				$tarifsql = 'SELECT prixpardef FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
 				$restarif = $db->query($tarifsql);
