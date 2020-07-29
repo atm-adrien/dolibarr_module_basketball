@@ -6,9 +6,11 @@ Soc2 = Equipe exterieure
 BasketMatch = Match de BasketBall
 NewBasketMatch = Nouveau Match
 ConfirmCloneMatch = Êtes-vous sur de vouloir cloner ce match avec cette ref ?
-Categ = Categorie / Champ
-codecat = Code catégorie
-prixpardef = Prix par défaut
+Categ = Categorie
+Codecat = Code catégories
+Prixpardef = Prix par défaut
+
+
 // Errors
 AllFieldMustBeFilled = Tous les champs doivent être remplis
 RecordUpdated = Modification enregistrée

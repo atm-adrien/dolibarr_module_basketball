@@ -176,6 +176,7 @@ class modBasket extends DolibarrModules
 		$langs->load("basket@basket");
 		// Dictionaries
 		$this->dictionaries = array(
+			$langs->load("basket@basket"),
 			// List of tables we want to see into dictonnary editor
 			'tabname' => array(
 					MAIN_DB_PREFIX . "c_terrain",
@@ -198,8 +199,8 @@ class modBasket extends DolibarrModules
 			),
 			// List of fields (result of select to show dictionary)
 			'tabfield' => array(
-				'code,' . $langs->trans("nom_terrain") . ',ville',
-				'codecat,' . $langs->trans("libelle") . ',prixpardef'
+				'code,' . $langs->trans("nomterrain") . ',ville',
+				'codecat,libelle,prixpardef'
 			),
 			// List of fields (list of fields to edit a record)
 			'tabfieldvalue' => array(
