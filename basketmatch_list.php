@@ -68,6 +68,8 @@ $tms = GETPOST('tms', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
+$search_date_valid_start = dol_mktime(0, 0, 0, GETPOST('search_date_valid_startmonth', 'int'), GETPOST('search_date_valid_startday', 'int'), GETPOST('search_date_valid_startyear', 'int'));
+$search_date_valid_end = dol_mktime(23, 59, 59, GETPOST('search_date_valid_endmonth', 'int'), GETPOST('search_date_valid_endday', 'int'), GETPOST('search_date_valid_endyear', 'int'));
 //// Get parameters
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha') ? GETPOST('sortorder', 'alpha') : 'ASC';
@@ -246,9 +248,10 @@ if ($ls_nom) $sqlwhere .= natural_search('t.nom', $ls_nom);
 if ($ls_soc1 != -1 && !empty($ls_soc1)) $sqlwhere .= natural_search('t.fk_soc1', $ls_soc1);
 if ($ls_soc2 != -1 && !empty($ls_soc2)) $sqlwhere .= natural_search('t.fk_soc2', $ls_soc2);
 if ($ls_tarif) $sqlwhere .= natural_search(array('t.tarif'), $ls_tarif);
-if ($ls_date_month) $sqlwhere .= " AND MONTH(t.date)='" . $ls_date_month . "'";
-if ($ls_date_year) $sqlwhere .= " AND YEAR(t.date)='" . $ls_date_year . "'";
 if ($ls_terrain != -1 && !empty($ls_terrain)) $sqlwhere .= natural_search('t.terrain', $ls_terrain);
+if ($ls_categories != -1 && !empty($ls_categories)) $sqlwhere .= natural_search('t.categ', $ls_categories);
+if ($search_date_valid_start) $sqlwhere .= " AND t.date >= '".$db->idate($search_date_valid_start)."'";
+if ($search_date_valid_end)   $sqlwhere .= " AND t.date <= '".$db->idate($search_date_valid_end)."'";
 
 //list limit
 if (!empty($sqlwhere))
@@ -346,16 +349,16 @@ if ($resql) {
 	print "\n";
 	print_liste_field_titre($langs->trans('Terrain'), $PHP_SELF, 't2.nom_terrain', '', $param, '', $sortfield, $sortorder);
 	print "\n";
-	print_liste_field_titre($langs->trans('Categories'), $PHP_SELF, 'c.libelle', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans('Categ'), $PHP_SELF, 'c.libelle', '', $param, '', $sortfield, $sortorder);
 	print "\n";
 	print_liste_field_titre($langs->trans(' '), $PHP_SELF, '', '', $param, '', $sortfield, $sortorder);
 	print "\n";
 
 
 	print '</tr>';
-	//SEARCH FIELDS
+//SEARCH FIELDS
 	print '<tr class = "liste_titre">';
-	//Search field forref
+//Search field forref
 	print '<td class="liste_titre" colspan="1" >';
 	print '<input class="flat" size="16" type="text" name="ls_ref" value="' . $ls_ref . '">';
 	print '</td>';
@@ -382,11 +385,21 @@ if ($resql) {
 	print '<input class="flat" size="16" type="text" name="ls_tarif" value="' . $ls_tarif . '">';
 	print '</td>';
 //Search field for date
-	print '<td class="liste_titre" colspan="1" >';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="date_month" value="' . $ls_date_month . '">';
-	$syear = $ls_date_year;
-	$formother->select_year($syear ? $syear : -1, 'ls_date_year', 1, 20, 5);
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $langs->trans('From').' ';
+	print $form->selectDate($search_date_valid_start ? $search_date_valid_start : -1, 'search_date_valid_start', 0, 0, 1);
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to').' ';
+	print $form->selectDate($search_date_valid_end ? $search_date_valid_end : -1, 'search_date_valid_end', 0, 0, 1);
+	print '</div>';
 	print '</td>';
+	//print '<td class="liste_titre" colspan="1" >';
+	//print '<input class="flat" type="text" size="1" maxlength="2" name="date_month" value="' . $ls_date_month . '">';
+	//$syear = $ls_date_year;
+	//$formother->select_year($syear ? $syear : -1, 'ls_date_year', 1, 20, 5);
+	//print '</td>';
 //Search field for terrain
 	print '<td class="liste_titre" colspan="1" >';
 	$sql_terrain = array('table' => 'c_terrain', 'keyfield' => 't.rowid', 'fields' => 't.nom_terrain', 'join' => '', 'where' => '', 'tail' => '');

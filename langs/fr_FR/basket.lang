@@ -11,6 +11,7 @@ Codecat = Code catégories
 Prixpardef = Prix par défaut
 
 
+
 // Errors
 AllFieldMustBeFilled = Tous les champs doivent être remplis
 RecordUpdated = Modification enregistrée

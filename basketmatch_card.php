@@ -208,12 +208,7 @@ switch ($action) {
 	case 'viewinfo':
 	case 'edit':
 		// fetch the object data if possible
-		if (empty($tarif) && $categ != -1) {
-			$tarifsql = 'SELECT prixpardef FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
-			$restarif = $db->query($tarifsql);
-			$tar = $db->fetch_object($restarif);
-			$object->tarif = $tar->prixpardef;
-		}
+
 		if ($id > 0 || !empty($ref)) {
 			$result = $object->fetch($id, $ref);
 			if ($result < 0) {
@@ -239,14 +234,7 @@ switch ($action) {
 			//Change the date type into Timestamp
 			$newdate = DateTime::createFromFormat('d/m/Y', $object->date);
 			$object->date = $newdate->getTimestamp();
-			if (empty($tarif) && $categ != -1) {
-				$tarifsql = 'SELECT prixpardef FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
-				$restarif = $db->query($tarifsql);
-				$tar = $db->fetch_object($restarif);
-				$object->tarif = $tar->prixpardef;
-			} else {
-				$object->tarif = price2num($tarif, 'MU');
-			}
+
 			$result = $object->create($user);
 			if ($result > 0) {
 				// Creation OK
@@ -456,13 +444,8 @@ switch ($action) {
 		if ($edit == 1) {
 			print '<input type="text" value="' . $object->tarif . '" name="Tarif">';
 		} else {
-			if (empty($tarif) && $categ != -1) {
-				$tarifsql = 'SELECT prixpardef FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
-				$restarif = $db->query($tarifsql);
-				$tar = $db->fetch_object($restarif);
-				$object->tarif = $tar;
-			}
-			print $object->tarif->prixpardef;
+
+			print $object->tarif;
 		}
 		print "</td>";
 		print "\n</tr>\n";
