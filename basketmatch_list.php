@@ -230,7 +230,11 @@ $sql .= ' FROM ' . MAIN_DB_PREFIX . 'basket_match as t';
 $sql .= ' JOIN llx_societe as s ON t.fk_soc1 = s.rowid';
 $sql .= ' JOIN llx_societe as s2 ON t.fk_soc2 = s2.rowid';
 $sql .= ' JOIN llx_c_terrain as t2 ON t.terrain = t2.rowid';
-$sql .= ' JOIN llx_c_categories as c ON t.categ = c.rowid';
+//ne comprend pas pq ça affiche tout sous cette consition et pas sans
+//if($object->categ == -1){
+//	$sql .= ' JOIN llx_c_categories as c ON t.categ = c.rowid';
+//}
+
 $sqlwhere = '';
 if (isset($object->entity))
 	$sqlwhere .= ' AND t.entity = ' . $conf->entity;
@@ -249,7 +253,7 @@ if ($ls_soc1 != -1 && !empty($ls_soc1)) $sqlwhere .= natural_search('t.fk_soc1',
 if ($ls_soc2 != -1 && !empty($ls_soc2)) $sqlwhere .= natural_search('t.fk_soc2', $ls_soc2);
 if ($ls_tarif) $sqlwhere .= natural_search(array('t.tarif'), $ls_tarif);
 if ($ls_terrain != -1 && !empty($ls_terrain)) $sqlwhere .= natural_search('t.terrain', $ls_terrain);
-if ($ls_categories != -1 && !empty($ls_categories)) $sqlwhere .= natural_search('t.categ', $ls_categories);
+if ($ls_categories != -1 && !empty($ls_categories)) {$sqlwhere .= natural_search('t.categ', $ls_categories);}
 if ($search_date_valid_start) $sqlwhere .= " AND t.date >= '".$db->idate($search_date_valid_start)."'";
 if ($search_date_valid_end)   $sqlwhere .= " AND t.date <= '".$db->idate($search_date_valid_end)."'";
 
@@ -296,6 +300,7 @@ if ($resql) {
 	if (!empty($ls_date_month)) $param .= '&ls_date_month = ' . urlencode($ls_date_month);
 	if (!empty($ls_date_year)) $param .= '&ls_date_year = ' . urlencode($ls_date_year);
 	if (!empty($ls_terrain)) $param .= '&ls_terrain = ' . urlencode($ls_terrain);
+	if (!empty($ls_categories)) $param .= '&ls_categories = ' . urlencode($ls_categories);
 
 
 	if ($filter && $filter != -1) $param .= '&filtre=' . urlencode($filter);

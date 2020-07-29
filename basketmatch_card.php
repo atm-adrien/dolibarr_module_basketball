@@ -176,7 +176,7 @@ switch ($action) {
 
 		if (empty($ref) || empty($nom) || $team1 == -1 || $team2 == -1 || $date == -1 || $terrain == -1) {
 			setEventMessage($langs->trans('AllFieldMustBeFilled'), 'errors');
-			$action = 'create';
+			$action = 'view';
 		} else {
 			$newdate = DateTime::createFromFormat('d/m/Y', $object->date);
 			$object->date = $newdate->getTimestamp();
@@ -239,13 +239,17 @@ switch ($action) {
 			//Change the date type into Timestamp
 			$newdate = DateTime::createFromFormat('d/m/Y', $object->date);
 			$object->date = $newdate->getTimestamp();
+			$tarifglob = 100.00;
 			if (empty($tarif) && $categ != -1) {
 				$tarifsql = 'SELECT prixpardef FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
 				$restarif = $db->query($tarifsql);
 				$tar = $db->fetch_object($restarif);
 				$object->tarif = $tar->prixpardef;
+			} elseif (empty($tarif) && $categ == -1){
+				$object->tarif = $tarifglob;
 			} else {
 				$object->tarif = price2num($tarif, 'MU');
+
 			}
 			$result = $object->create($user);
 			if ($result > 0) {
@@ -456,13 +460,16 @@ switch ($action) {
 		if ($edit == 1) {
 			print '<input type="text" value="' . $object->tarif . '" name="Tarif">';
 		} else {
-			if (empty($tarif) && $categ != -1) {
+			if (empty($object->tarif) && $categ != -1) {
 				$tarifsql = 'SELECT prixpardef FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
 				$restarif = $db->query($tarifsql);
 				$tar = $db->fetch_object($restarif);
 				$object->tarif = $tar;
+				print $object->tarif->prixpardef;
+			} else {
+				print $object->tarif;
 			}
-			print $object->tarif->prixpardef;
+
 		}
 		print "</td>";
 		print "\n</tr>\n";

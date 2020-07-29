@@ -75,6 +75,9 @@ class modBasket extends DolibarrModules
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto = 'basket@basket';
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
+		$this->config_page_url = array(
+			"admin_basket.php@basket"
+		);
 		$this->module_parts = array(
 			// Set this to 1 if module has its own trigger directory (core/triggers)
 			'triggers' => 0,

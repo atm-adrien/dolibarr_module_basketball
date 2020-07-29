@@ -74,9 +74,9 @@ $now = dol_now();
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("", $langs->trans("Match de BasketBall"));
+llxHeader("", $langs->trans("BasketMatch"));
 
-print load_fiche_titre($langs->trans("Match de BasketBall"), '', 'mymodule.png@mymodule');
+print load_fiche_titre($langs->trans("BasketMatch"), '', 'basket.png@basket');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
