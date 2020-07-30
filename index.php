@@ -42,7 +42,7 @@ if (!$res) die("Include of main fails");
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("mymodule@mymodule"));
+$langs->loadLangs(array("basket@basket"));
 
 $action = GETPOST('action', 'alpha');
 
@@ -74,9 +74,9 @@ $now = dol_now();
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("", $langs->trans("Match de BasketBall"));
+llxHeader("", $langs->trans("BasketMatch"));
 
-print load_fiche_titre($langs->trans("MyModuleArea"), '', 'mymodule.png@mymodule');
+print load_fiche_titre($langs->trans("BasketMatch"), '', 'basket.png@basket');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -167,14 +167,13 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 $NBMAX = 3;
 $max = 3;
 
-/* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
+/* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT */
 // Last modified myobject
-if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
+/*if (! empty($conf->basket->enabled) && $user->rights->basket->read)
 {
-	$sql = "SELECT s.rowid, s.nom as name, s.client, s.datec, s.tms, s.canvas";
-	$sql.= ", s.code_client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql = "SELECT b.rowid, b.nom as name, b.fk_soc1 as eq1, b.fk_soc2 as eq2, b.tarif as tar, b.date as date, b.terrain as terrain";
+	$sql.= " FROM ".MAIN_DB_PREFIX."basket_match as b";
+	if (! $user->rights->basket->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.client IN (1, 2, 3)";
 	$sql.= " AND s.entity IN (".getEntity($companystatic->element).")";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;

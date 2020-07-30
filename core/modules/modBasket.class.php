@@ -73,8 +73,11 @@ class modBasket extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto = 'generic';
+		$this->picto = 'basket@basket';
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
+		$this->config_page_url = array(
+			"admin_basket.php@basket"
+		);
 		$this->module_parts = array(
 			// Set this to 1 if module has its own trigger directory (core/triggers)
 			'triggers' => 0,
@@ -113,7 +116,6 @@ class modBasket extends DolibarrModules
 		// Example: this->dirs = array("/basket/temp","/basket/subdir");
 		$this->dirs = array("/basket/temp");
 		// Config pages. Put here list of php page, stored into basket/admin directory, to use to setup module.
-		$this->config_page_url = array("setup.php@basket");
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
@@ -121,7 +123,7 @@ class modBasket extends DolibarrModules
 		$this->depends = array();
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
-		$this->langfiles = array("langs@basket");
+		$this->langfiles = array("basket@basket");
 		$this->phpmin = array(5, 5); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -177,25 +179,55 @@ class modBasket extends DolibarrModules
 		$langs->load("basket@basket");
 		// Dictionaries
 		$this->dictionaries = array(
+			$langs->load("basket@basket"),
 			// List of tables we want to see into dictonnary editor
-			'tabname' => array(MAIN_DB_PREFIX . "c_terrain"),
+			'tabname' => array(
+					MAIN_DB_PREFIX . "c_terrain",
+					MAIN_DB_PREFIX . "c_categories"
+			),
 			// Label of tables
-			'tablib' => array("DictionaryTerrain" => $langs->trans('Basket - Terrains/Gymnases')),
+			'tablib' => array(
+				"DictionaryTerrain" => $langs->trans('Basket - Terrains/Gymnases'),
+				"DictionaryCategories" => $langs->trans('Basket - Catégories match')
+			),
 			// Request to select fields
-			'tabsql' => array('SELECT rowid, code, nom_terrain, ville, active FROM ' . MAIN_DB_PREFIX . 'c_terrain'),
+			'tabsql' => array(
+				'SELECT rowid, code, nom_terrain, ville, active FROM ' . MAIN_DB_PREFIX . 'c_terrain',
+				'SELECT rowid, codecat, libelle, prixpardef, active FROM ' . MAIN_DB_PREFIX . 'c_categories'
+			),
 			// Sort order
-			'tabsqlsort' => array("nom_terrain ASC"),
+			'tabsqlsort' => array(
+				"nom_terrain ASC",
+				"libelle ASC"
+			),
 			// List of fields (result of select to show dictionary)
-			'tabfield' => array('code,' . $langs->trans("nom_terrain") . ',ville'),
+			'tabfield' => array(
+				'code,' . $langs->trans("nomterrain") . ',ville',
+				'codecat,libelle,prixpardef'
+			),
 			// List of fields (list of fields to edit a record)
-			'tabfieldvalue' => array("code,nom_terrain,ville"),
+			'tabfieldvalue' => array(
+				"code,nom_terrain,ville",
+				"codecat,libelle,prixpardef"
+			),
 			// List of fields (list of fields for insert)
-			'tabfieldinsert' => array("code,nom_terrain,ville"),
+			'tabfieldinsert' => array(
+				"code,nom_terrain,ville",
+				"codecat,libelle,prixpardef"
+			),
 			// Name of columns with primary key (try to always name it 'rowid')
-			'tabrowid' => array("rowid"),
+			'tabrowid' => array(
+				"rowid",
+				"rowid"
+			),
 			// Condition to show each dictionary
-			'tabcond' => array($conf->basket->enabled)
+			'tabcond' => array(
+				$conf->basket->enabled,
+				$conf->basket->enabled
+			)
 		);
+
+
 		/* Example:
 		$this->dictionaries=array(
 			'langs'=>'langs@basket',
@@ -286,7 +318,7 @@ class modBasket extends DolibarrModules
 			'titre' => 'Match',
 			'mainmenu' => 'basket',
 			'leftmenu' => '',
-			'url' => '/basket/index.php',
+			'url' => '/basket/basketmatch_list.php',
 			'langs' => 'langs@basket', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => '$conf->basket->enabled', // Define condition to show or hide menu entry. Use '$conf->basket->enabled' if entry must be visible if module is enabled.
@@ -304,7 +336,7 @@ class modBasket extends DolibarrModules
 			'mainmenu' => 'basket',
 			'leftmenu' => 'basket_basketmatch_new',
 			'url' => '/basket/basketmatch_card.php?action=create',
-			'langs' => 'langs@basket',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs' => 'basket@basket',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => '$conf->basket->enabled',  // Define condition to show or hide menu entry. Use '$conf->basket->enabled' if entry must be visible if module is enabled.
 			'perms' => '$user->rights->basket->basketmatch->read',                            // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -319,7 +351,7 @@ class modBasket extends DolibarrModules
 			'mainmenu' => 'basket',
 			'leftmenu' => 'basket_basketmatch_list',
 			'url' => '/basket/basketmatch_list.php',
-			'langs' => 'mymodule@mymodule',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs' => 'basket@basket',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => '$conf->basket->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms' => '$user->rights->basket->basketmatch->read',                            // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules

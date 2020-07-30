@@ -1,3 +1,28 @@
 
 DictionaryTerrain = Basket - Terrains/Gymnases
 Nom_terrain = Nom du terrain
+Soc1 = Equipe domicile
+Soc2 = Equipe exterieure
+BasketMatch = Match de BasketBall
+NewBasketMatch = Nouveau Match
+ConfirmCloneMatch = Êtes-vous sur de vouloir cloner ce match avec cette ref ?
+Categ = Categorie
+Codecat = Code catégories
+Prixpardef = Prix par défaut
+BasketSetup = Configuration du module Basket
+DefaultPrice = Prix par défaut du ticket d'un match
+
+
+// Errors
+AllFieldMustBeFilled = Tous les champs doivent être remplis
+RecordUpdated = Modification enregistrée
+RecordNotUpdated = Echec de l'enregistrement de la modification
+noIdPresent = Aucun ID n'est présent
+RecordSucessfullyCreated = Enregistrement crée avec succés
+RecordNotSucessfullyCreated = Echec de la création de l'enregistrement
+RecordDeleted = Enregistrement supprimé
+RecordNotDeleted = Echec de la suppression
+BackToList = Retour liste
+WrongTimeStamp_requestNotExpected = Mauvais horodatage, requête non-attendue
+FilledTheRef = Le champ "Ref" doit être rempli
+ThisRefAlreadyExists = La référence existe déjà
