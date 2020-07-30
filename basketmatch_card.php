@@ -45,6 +45,7 @@ include 'lib/includeMain.lib.php';
 require_once 'basketmatch.class.php';
 require_once 'lib/generic.lib.php';
 require_once 'lib/basketmatch.lib.php';
+
 dol_include_once('/core/lib/functions2.lib.php');
 //document handling
 dol_include_once('/core/lib/files.lib.php');
@@ -52,9 +53,11 @@ dol_include_once('/core/lib/files.lib.php');
 dol_include_once('/core/class/html.formfile.class.php');
 dol_include_once('/core/class/html.formother.class.php');
 dol_include_once('/core/class/html.formprojet.class.php');
+
+
 $PHP_SELF = $_SERVER['PHP_SELF'];
-// Load traductions files requiredby by page
-//$langs->load("companies");
+
+// Load traductions files required by by page
 $langs->load("basket@basket");
 
 // Get parameter

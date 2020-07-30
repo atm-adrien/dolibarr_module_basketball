@@ -103,6 +103,7 @@ class modBasket extends DolibarrModules
 			),
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
 			'hooks' => array(
+				'thirdpartycard'
 				//   'data' => array(
 				//       'hookcontext1',
 				//       'hookcontext2',
@@ -182,8 +183,8 @@ class modBasket extends DolibarrModules
 			$langs->load("basket@basket"),
 			// List of tables we want to see into dictonnary editor
 			'tabname' => array(
-					MAIN_DB_PREFIX . "c_terrain",
-					MAIN_DB_PREFIX . "c_categories"
+				MAIN_DB_PREFIX . "c_terrain",
+				MAIN_DB_PREFIX . "c_categories"
 			),
 			// Label of tables
 			'tablib' => array(
