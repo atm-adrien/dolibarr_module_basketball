@@ -180,8 +180,7 @@ switch ($action) {
 		} else {
 			$newdate = DateTime::createFromFormat('d/m/Y', $object->date);
 			$object->date = $newdate->getTimestamp();
-			if (empty($tarif)) {
-				var_dump($object->tarif);
+			if (isset($tarif) || $categ != -1) {
 				$tarifsql = 'SELECT prixpardef FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
 				$restarif = $db->query($tarifsql);
 				$tar = $db->fetch_object($restarif);
@@ -208,7 +207,7 @@ switch ($action) {
 	case 'viewinfo':
 	case 'edit':
 		// fetch the object data if possible
-		if (isset($tarif) || $categ == -1) {
+		if (empty($tarif) || $categ != -1) {
 			$tarifsql = 'SELECT prixpardef FROM ' . MAIN_DB_PREFIX . 'c_categories WHERE rowid = ' . $object->categ;
 			$restarif = $db->query($tarifsql);
 			$tar = $db->fetch_object($restarif);
