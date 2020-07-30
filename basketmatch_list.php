@@ -253,7 +253,10 @@ if ($ls_soc1 != -1 && !empty($ls_soc1)) $sqlwhere .= natural_search('t.fk_soc1',
 if ($ls_soc2 != -1 && !empty($ls_soc2)) $sqlwhere .= natural_search('t.fk_soc2', $ls_soc2);
 if ($ls_tarif) $sqlwhere .= natural_search(array('t.tarif'), $ls_tarif);
 if ($ls_terrain != -1 && !empty($ls_terrain)) $sqlwhere .= natural_search('t.terrain', $ls_terrain);
-if ($ls_categories != -1 && !empty($ls_categories)) {$sqlwhere .= natural_search('t.categ', $ls_categories);}
+if ($ls_categories != -1 && !empty($ls_categories)) {
+	$sqlwhere .= natural_search('t.categ', $ls_categories);
+	$sqlwhere .= 'AND t.categ != -1';
+}
 if ($search_date_valid_start) $sqlwhere .= " AND t.date >= '".$db->idate($search_date_valid_start)."'";
 if ($search_date_valid_end)   $sqlwhere .= " AND t.date <= '".$db->idate($search_date_valid_end)."'";
 
