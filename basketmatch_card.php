@@ -139,6 +139,7 @@ if (!empty($ref)) {
 
 // Action to add record
 $error = 0;
+$object->soc1 = $team1;
 if ($cancel) {
 	BasketMatchReloadPage($backtopage, $id, $ref);
 } else {
@@ -150,13 +151,12 @@ if ($cancel) {
 		}
 		//retrive the data
 		$object->ref = $ref;
-		$object->nom = $nom;
 		$object->terrain = $terrain;
-		$object->soc1 = $team1;
 		$object->soc2 = $team2;
 		$object->tarif = $tarif;
 		$object->date = $date;
 		$object->categ = $categ;
+		$object->nom = $nom;
 
 // test here if the post data is valide
 		/*
