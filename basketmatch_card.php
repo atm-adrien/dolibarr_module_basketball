@@ -158,17 +158,6 @@ if ($cancel) {
 		$object->categ = $categ;
 		$object->nom = $nom;
 
-// test here if the post data is valide
-		/*
-		if($object->prop1==0 || $object->prop2==0)
-		{
-			if ($id>0 || $ref!='')
-			   $action='create';
-			else
-			   $action='edit';
-		}
-		 */
-
 	} else if ($id == 0 && $ref == '' && $action != 'create') {
 		$action = 'create';
 	}

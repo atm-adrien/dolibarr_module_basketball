@@ -444,9 +444,9 @@ class modBasket extends DolibarrModules
 		if ($result < 0) return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 
 		// Create extrafields during init
-		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		//$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('mymodule_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', '$conf->mymodule->enabled');
+		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		$result1=$extrafields->addExtraField('MentSpec', "Mentions spécifiques", 'text', 1,  3, 'propal',   0, 0, '', '', 1, '', 1, 0, '', '', 'basket@basket', '$conf->basket->enabled', 0, 1);
 		//$result2=$extrafields->addExtraField('mymodule_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', '$conf->mymodule->enabled');
 		//$result3=$extrafields->addExtraField('mymodule_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', '$conf->mymodule->enabled');
 		//$result4=$extrafields->addExtraField('mymodule_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'mymodule@mymodule', '$conf->mymodule->enabled');
