@@ -139,7 +139,9 @@ if (!empty($ref)) {
 
 // Action to add record
 $error = 0;
-$object->soc1 = $team1;
+if (!empty($team1)){
+	$object->soc1 = $team1;
+}
 if ($cancel) {
 	BasketMatchReloadPage($backtopage, $id, $ref);
 } else {
@@ -425,18 +427,15 @@ switch ($action) {
 
 		print "<tr>\n";
 		print '<td class="fieldrequired">' . $langs->trans('Soc1') . ' </td><td>';
-		if ($team1 != '') {
-			$team1 = new Societe($db);
-			$team1->fetch($object->soc1);
-			print $team1->getNomUrl('1');
-		} elseif ($edit == 1) {
+		if ($edit == 1) {
 			$sql_soc1 = array('table' => 'societe', 'keyfield' => 'rowid', 'fields' => 'nom', 'join' => '', 'where' => '', 'tail' => '');
 			$html_soc1 = array('name' => 'team1', 'class' => '', 'otherparam' => '', 'ajaxNbChar' => '', 'separator' => '-');
 			$addChoices_soc1 = null;
 			print select_sellist($sql_soc1, $html_soc1, $object->soc1, $addChoices_soc1);
 		} else {
-			var_dump($object->soc1);exit();
-			print $object->soc1;
+			$team1 = new Societe($db);
+			$team1->fetch($object->soc1);
+			print $team1->getNomUrl('1');
 		}
 		print "</td>";
 		print "\n</tr>\n";
