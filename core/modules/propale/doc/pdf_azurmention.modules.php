@@ -439,7 +439,8 @@ class pdf_azurmention extends ModelePDFPropales
 						if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
 					}
 				}
-                // Extrafields in note
+               // Extrafields in note
+				//$notetoshow = dol_concatdesc($object->array_options['options_MentSpec'], $notetoshow);
                 $extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
                 if (!empty($extranote)) {
                     $notetoshow = dol_concatdesc($notetoshow, $extranote);
@@ -1708,7 +1709,14 @@ class pdf_azurmention extends ModelePDFPropales
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
-		global $conf;
+		global $conf, $db, $langs;
+		
+		if (!empty($object->array_options['options_MentSpec'])){
+			$posx = 10;
+			$posy = $this->page_hauteur - $this->marge_basse * 1.5;
+			$pdf->SetXY($posx, $posy);
+			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 5, $langs->trans('SpecificMention'). ' : '.$object->array_options['options_MentSpec'], 1, 'L', 0);
+		}
 		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'PROPOSAL_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
