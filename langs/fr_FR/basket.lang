@@ -12,6 +12,7 @@ Prixpardef = Prix par défaut
 BasketSetup = Configuration du module Basket
 DefaultPrice = Prix par défaut du ticket d'un match
 CreateMatch = Créer un match
+SpecificMention = Mentions spécifiques
 
 
 // EventMessaage
