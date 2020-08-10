@@ -401,7 +401,7 @@ class modBasket extends DolibarrModules
 			'b.nom' => "Text",
 			's1.nom' => "Text",
 			's2.nom' => "Text",
-			'b.tarif' => "Text",
+			'b.tarif' => "Numeric",
 			'b.date' => 'Date',
 			't.nom_terrain' => "Text",
 			'c.libelle' => "Text",
