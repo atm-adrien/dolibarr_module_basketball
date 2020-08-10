@@ -420,11 +420,11 @@ class modBasket extends DolibarrModules
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r] = ' FROM ' . MAIN_DB_PREFIX . 'basket_match as b';
-		$this->export_sql_end[$r] .= ' JOIN ' . MAIN_DB_PREFIX . 'societe as s1 ON b.fk_soc1 = s1.rowid';
-		$this->export_sql_end[$r] .= ' JOIN ' . MAIN_DB_PREFIX . 'societe as s2 ON b.fk_soc2 = s2.rowid';
-		$this->export_sql_end[$r] .= ' JOIN ' . MAIN_DB_PREFIX . 'c_terrain as t ON b.terrain = t.rowid';
-		$this->export_sql_end[$r] .= ' JOIN ' . MAIN_DB_PREFIX . 'c_categories as c ON b.categ = c.rowid';
-		//$this->export_sql_end[$r] .= ' WHERE c.entity IN (' . getEntity("societe", 1) . ')';
+		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe as s1 ON b.fk_soc1 = s1.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe as s2 ON b.fk_soc2 = s2.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_terrain as t ON b.terrain = t.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_categories as c ON b.categ = c.rowid';
+		$this->export_sql_end[$r] .= ' WHERE 1';
 
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
 		/*
