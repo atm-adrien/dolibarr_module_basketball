@@ -139,7 +139,9 @@ if (!empty($ref)) {
 
 // Action to add record
 $error = 0;
-$object->soc1 = $team1;
+if (!empty($team1)){
+	$object->soc1 = $team1;
+}
 if ($cancel) {
 	BasketMatchReloadPage($backtopage, $id, $ref);
 } else {
@@ -236,7 +238,7 @@ switch ($action) {
 				$restarif = $db->query($tarifsql);
 				$tar = $db->fetch_object($restarif);
 				$object->tarif = $tar->prixpardef;
-			} elseif (empty($tarif) && $categ == -1){
+			} elseif (empty($tarif) && $categ == -1) {
 				$object->tarif = $tarifglob;
 			} else {
 				$object->tarif = price2num($tarif, 'MU');
