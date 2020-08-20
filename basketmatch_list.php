@@ -230,6 +230,7 @@ $sql .= ' FROM ' . MAIN_DB_PREFIX . 'basket_match as t';
 $sql .= ' JOIN llx_societe as s ON t.fk_soc1 = s.rowid';
 $sql .= ' JOIN llx_societe as s2 ON t.fk_soc2 = s2.rowid';
 $sql .= ' JOIN llx_c_terrain as t2 ON t.terrain = t2.rowid';
+$sql .= ' LEFT JOIN llx_c_categories as c ON t.categ = c.rowid';
 //ne comprend pas pq ça affiche tout sous cette consition et pas sans
 //if($object->categ == -1){
 //	$sql .= ' JOIN llx_c_categories as c ON t.categ = c.rowid';

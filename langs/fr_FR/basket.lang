@@ -12,7 +12,8 @@ Prixpardef = Prix par défaut
 BasketSetup = Configuration du module Basket
 DefaultPrice = Prix par défaut du ticket d'un match
 CreateMatch = Créer un match
-SpecificMention = Mentions spécifiques
+SpecificMention = Mentions specifiques
+DocModelAzurMentionDescription = Un modèle de proposition complet (ancienne implémentation du modèle Cyan)
 
 
 //Export CSV
