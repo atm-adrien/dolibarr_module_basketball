@@ -15,6 +15,15 @@ CreateMatch = Créer un match
 SpecificMention = Mentions spécifiques
 
 
+//Export CSV
+ExportDataset_basket = Match - Export de match
+MatchName = Nom du match
+HomeTeam = Equipe domicile
+OutTeam = Equipe exterieure
+Price = Tarif
+BasketballCourt = Terrain
+
+
 // EventMessaage
 AllFieldMustBeFilled = Tous les champs doivent être remplis
 RecordUpdated = Modification enregistrée

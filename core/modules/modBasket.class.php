@@ -377,7 +377,55 @@ class modBasket extends DolibarrModules
 		END MODULEBUILDER LEFTMENU MYOBJECT */
 
 		// Exports profiles provided by this module
-		$r = 1;
+		// Trainee export
+		$r = 0;
+		$r ++;
+		$this->export_code[$r] = $this->rights_class . '_' . $r;
+		$this->export_label[$r] = 'ExportDataset_basket';
+		$this->export_icon[$r] = 'littlebasket@basket';
+
+		$this->export_fields_array[$r] = array(
+			'b.rowid' => 'Id',
+			'b.ref' => 'Ref',
+			'b.nom' => 'MatchName',
+			's1.nom' => 'HomeTeam',
+			's2.nom' => 'OutTeam',
+			'b.tarif' => 'Price',
+			'b.date' => 'Date',
+			't.nom_terrain' => 'BasketballCourt',
+			'c.libelle' => 'Categories',
+		);
+		$this->export_TypeFields_array[$r] = array(
+			'b.rowid' => "Int",
+			'b.ref' => "Text",
+			'b.nom' => "Text",
+			's1.nom' => "Text",
+			's2.nom' => "Text",
+			'b.tarif' => "Numeric",
+			'b.date' => 'Date',
+			't.nom_terrain' => "Text",
+			'c.libelle' => "Text",
+		);
+		$this->export_entities_array[$r] = array(
+			'b.rowid' => "Match",
+			'b.ref' => "Match",
+			'b.nom' => "Match",
+			's1.nom' => "company",
+			's2.nom' => "company",
+			'b.tarif' => "Match",
+			'b.date' => 'Match',
+			't.nom_terrain' => "BasketballCourt",
+			'c.libelle' => "Categories",
+		);
+
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r] = ' FROM ' . MAIN_DB_PREFIX . 'basket_match as b';
+		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe as s1 ON b.fk_soc1 = s1.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe as s2 ON b.fk_soc2 = s2.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_terrain as t ON b.terrain = t.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_categories as c ON b.categ = c.rowid';
+		$this->export_sql_end[$r] .= ' WHERE 1';
+
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
 		/*
 		$langs->load("mymodule@mymodule");
